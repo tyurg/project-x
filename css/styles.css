@@ -1,0 +1,90 @@
+@font-face {
+    font-family: 'BookmanOldStyle';
+    src: url('../fonts/bookmanoldstyle_bold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+* {
+    font-family: 'BookmanOldStyle';
+}
+
+body {
+    background-color: rgb(218, 235, 252);
+}
+
+
+.active {
+    background: rgb(182, 197, 211);
+    border-radius: 5px;
+    font-weight: bold;
+    color: rgb(68, 95, 107);
+}
+
+#menu-toggle {
+    display: none;
+}
+
+.menu-icon {
+    display: none;
+}
+
+nav {
+    background: aliceblue;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+    padding: 0.5rem 0;
+}
+
+nav a {
+    color: rgb(39, 60, 70);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+}
+
+nav a:hover {
+    color: rgb(114, 128, 139);
+}
+
+footer {
+    background-color: aliceblue;
+    color: rgb(39, 60, 70);
+    position: fixed;
+    width: 100%;
+    height: auto;
+    min-height: 4rem;
+    z-index: 100;
+    bottom: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+footer p {
+    font-size: 1rem;
+    text-align: center;
+}
+
+footer a {
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+footer a:hover {
+    color: white;
+}

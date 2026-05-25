@@ -1,24 +1,22 @@
-
-
 import { Header } from './components/Header.js';
 import { Footer } from './components/Footer.js';
-import { Tasks } from './pages/Tasks.js';
-import { Profile } from './pages/Profile.js';
-import { Help } from './pages/Help.js';
+import { TasksPage } from './pages/TasksPage.js';
+import { ProfilePage } from './pages/ProfilePage.js';
+import { HelpPage } from './pages/HelpPage.js';
 document.addEventListener('DOMContentLoaded', () => {
     const currentPage = window.location.pathname.split('/').pop();
 
     switch (currentPage) {
-        case 'tasks.html':
-            new Tasks().init();
+        case 'profile.html':
+            new ProfilePage().init();
             break;
 
-        case 'profile.html':
-            new Profile().init();
+        case 'tasks.html':
+            new TasksPage().init();
             break;
 
         case 'help.html':
-            new Help().init();
+            new HelpPage().init();
             break;
 
         default:

@@ -12,20 +12,23 @@
     <div id="header-container"></div>
 
     <div id="wrapper">
-        <h4>Tasks</h4>
-        <div>
+        <h3>Задачи</h3>
+        <div class="tasks-list">
+            
             <div class="out-task">
-                <input type="text">
-                <span class="delete-task-button">-</span>
+                <input type="checkbox" class="task-checkbox">
+                <input type="text" class="task-input" value="Пример задачи">
+                <span class="delete-task-button">×</span>
             </div>
-            <span class="add-task-button">+</span>
+            <span class="add-task-button">+ Добавить задачу</span>
         </div>
     </div>
 
-    <div id="template">
+    <div id="template" style="display: none;">
         <div class="out-task">
-            <input type="text">
-            <span class="delete-task-button">-</span>
+            <input type="checkbox" class="task-checkbox">
+            <input type="text" class="task-input" value="">
+            <span class="delete-task-button">×</span>
         </div>
     </div>
 

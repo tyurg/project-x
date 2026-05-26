@@ -12,12 +12,17 @@
 
 body {
     background-color: rgb(218, 235, 252);
+    margin: 0;
+    padding: 0;
+    padding-top: 3.75rem;
+    padding-bottom: 3.75rem;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
-
 
 .active {
     background: rgb(182, 197, 211);
-    border-radius: 5px;
+    border-radius: 0.3125rem;
     font-weight: bold;
     color: rgb(68, 95, 107);
 }
@@ -89,50 +94,133 @@ footer a:hover {
     color: aliceblue;
 }
 
+.tasks-container {
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 1.25rem;
+}
+
+#wrapper { 
+    margin: auto;
+    width: 50%;
+    min-width: 18.75rem;
+    border: 0.0625rem solid grey;
+    padding: 1.5em;
+    border-radius: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+#wrapper h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: rgb(39, 60, 70);
+    font-size: 1.5rem;
+}
+
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
 
 .out-task {
-  display: flex;
-  margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.out-task.completed {
+    background-color: rgba(98, 148, 214, 0.2);
+    opacity: 0.8;
+}
+
+.out-task.completed .task-input {
+    text-decoration: line-through;
+    color: rgb(114, 128, 139);
+}
+
+.task-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+    margin: 0;
+    accent-color: rgb(98, 148, 214);
+}
+
+.out-task input.task-input {
+    background-color: aliceblue;
+    border-radius: 0.5rem;
+    height: 2rem;
+    margin: 0;
+    color: rgb(39, 60, 70);                  
+    border: 0.0625rem solid rgb(114, 128, 139);       
+    padding: 1rem 1rem;          
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.out-task input.task-input:focus {
+    outline: none;
+    border-color: rgb(98, 148, 214);
+    box-shadow: 0 0 0.3125rem rgba(98, 148, 214, 0.3);
 }
 
 .delete-task-button {
-  margin-left: 1rem;
-  background : rgb(218, 89, 89);
-  width          : 3rem;
-  height         : 2rem;
-  border-radius  : 0.75rem;
-  color          : aliceblue;
-  display        : flex;
-  justify-content: center;
-  align-items    : center;
-  cursor         : pointer;
-  font-weight    : bold;
+    background: rgb(218, 89, 89);
+    width: 3rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    color: aliceblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.delete-task-button:hover {
+    background: rgb(200, 70, 70);
+    transform: scale(1.05);
 }
 
 .add-task-button {
-  width          : 75%;
-  height         : 2rem;
-  border-radius  : 0.75rem;
-  color          : aliceblue;
-  display        : flex;
-  justify-content: center;
-  align-items    : center;
-  cursor         : pointer;
-  font-weight    : bold;
-  background: rgb(98, 148, 214);
-  margin: auto;
-}
-
-#wrapper {
-    margin: auto;
     width: 50%;
-    border: 0.0625rem solid grey;
-    padding:.8em;
+    height: 2rem;
+    border-radius: 0.5rem;
+    color: aliceblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    background: rgb(98, 148, 214);
+    margin: 1rem auto 0;
+    transition: all 0.2s ease;
 }
 
-#wrapper h4 {
+.add-task-button:hover {
+    background: rgb(78, 128, 194);
+    transform: scale(1.02);
+}
+
+.tasks-counter {
     text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
     color: rgb(39, 60, 70);
+    font-size: 0.9rem;
+    border-top: 0.0625rem solid rgb(182, 197, 211);
 }
 
 #template {

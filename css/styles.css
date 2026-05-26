@@ -317,3 +317,22 @@ footer a:hover {
     border: 0.0625rem solid rgb(114, 128, 139);
     font-size: 0.85rem;
 }
+
+.out-task.deadline-safe {
+    border-left: 6px solid rgb(89, 218, 106);
+}
+
+.out-task.deadline-warning {
+    border-left: 6px solid rgb(218, 216, 89);
+}
+
+.out-task.deadline-danger {
+    border-left: 6px solid rgb(218, 89, 89);
+}
+
+.out-task {
+    border-left-width: 6px;
+    border-left-style: solid;
+    border-left-color: transparent;
+    transition: border-left-color 0.2s;
+}

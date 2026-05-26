@@ -25,17 +25,13 @@ export class TasksForm {
             return;
         }
 
-        // Удаляем старые обработчики, чтобы избежать дублирования
         listTasks.removeEventListener('click', this.handleClick);
         listTasks.removeEventListener('change', this.handleChange);
         listTasks.removeEventListener('input', this.handleInput);
 
-        // Обработчик кликов (добавление, удаление, переключение чекбокса)
         this.handleClick = (e) => {
-            // Добавление новой задачи
             if (e.target.classList.contains('add-task-button')) {
                 let newTask = taskWrapper.cloneNode(true);
-                // Сброс значений
                 const titleInput = newTask.querySelector('.task-title');
                 if (titleInput) titleInput.value = '';
                 const prioritySelect = newTask.querySelector('.task-priority');
@@ -50,8 +46,8 @@ export class TasksForm {
 
                 listTasks.insertBefore(newTask, e.target);
                 this.saveTasks();
+                this.updateDeadlineIndicators();
             }
-            // Удаление задачи
             else if (e.target.classList.contains('delete-task-button')) {
                 const taskToRemove = e.target.closest('.out-task');
                 if (taskToRemove && listTasks.contains(taskToRemove)) {
@@ -59,7 +55,6 @@ export class TasksForm {
                     this.saveTasks();
                 }
             }
-            // Переключение состояния выполнения (чекбокс)
             else if (e.target.classList.contains('task-checkbox')) {
                 const taskItem = e.target.closest('.out-task');
                 if (taskItem) {
@@ -69,15 +64,24 @@ export class TasksForm {
                         taskItem.classList.remove('completed');
                     }
                     this.saveTasks();
+                    this.updateDeadlineIndicators();
                 }
             }
         };
 
-        // Обработчик изменений полей (select, datetime-local)
         this.handleChange = (e) => {
             if (e.target.classList.contains('task-priority') ||
                 e.target.classList.contains('task-category') ||
                 e.target.classList.contains('task-deadline')) {
+                this.saveTasks();
+                if (e.target.classList.contains('task-deadline')) {
+                    this.updateDeadlineIndicators();
+                }
+            }
+        };
+
+        this.handleInput = (e) => {
+            if (e.target.classList.contains('task-title')) {
                 this.saveTasks();
             }
         };
@@ -86,8 +90,39 @@ export class TasksForm {
         listTasks.addEventListener('change', this.handleChange);
         listTasks.addEventListener('input', this.handleInput);
 
-
         this.loadTasks();
+    }
+
+    updateDeadlineIndicators() {
+        const tasks = document.querySelectorAll('#wrapper .out-task:not(#template .out-task)');
+        const now = new Date();
+
+        tasks.forEach(task => {
+            const deadlineInput = task.querySelector('.task-deadline');
+            const checkbox = task.querySelector('.task-checkbox');
+            const isCompleted = checkbox ? checkbox.checked : false;
+
+            task.classList.remove('deadline-safe', 'deadline-warning', 'deadline-danger');
+
+            if (isCompleted) return;
+
+            const deadlineValue = deadlineInput?.value;
+            if (!deadlineValue) return;
+
+            const deadlineDate = new Date(deadlineValue);
+            if (isNaN(deadlineDate.getTime())) return;
+
+            const diffMs = deadlineDate - now;
+            const diffHours = diffMs / (1000 * 60 * 60);
+
+            if (diffMs < 0) {
+                task.classList.add('deadline-danger');
+            } else if (diffHours <= 24) {
+                task.classList.add('deadline-warning');
+            } else {
+                task.classList.add('deadline-safe');
+            }
+        });
     }
 
     saveTasks() {
@@ -127,7 +162,6 @@ export class TasksForm {
 
         if (!listTasks || !taskWrapper) return;
 
-        // Сохраняем кнопку добавления, чтобы потом её вернуть
         const addButton = listTasks.querySelector('.add-task-button');
         listTasks.innerHTML = '';
 
@@ -158,12 +192,12 @@ export class TasksForm {
             listTasks.appendChild(newTask);
         });
 
-        // Восстанавливаем кнопку добавления
         const newAddButton = document.createElement('span');
         newAddButton.className = 'add-task-button';
         newAddButton.textContent = '+ Добавить задачу';
         listTasks.appendChild(newAddButton);
 
+        this.updateDeadlineIndicators();
         console.log('Задачи загружены');
     }
 }

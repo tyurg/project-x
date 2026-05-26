@@ -6,7 +6,8 @@ export class TasksForm {
         this.filteredTasks = [];
         this.listContainer = null;
         this.modal = null;
-        this.filter = null;  // экземпляр TasksFilter
+        this.filter = null;
+        this.editingTaskIndex = null;   // индекс в this.tasks для редактирования
 
         // Элементы фильтров
         this.searchInput = null;
@@ -37,7 +38,6 @@ export class TasksForm {
         title.textContent = 'Задачи';
         container.appendChild(title);
 
-        // Панель фильтров и сортировки
         const filterPanel = this.createFilterPanel();
         container.appendChild(filterPanel);
 
@@ -178,6 +178,12 @@ export class TasksForm {
         titleSpan.className = 'task-title';
         titleSpan.textContent = task.title;
 
+        const editBtn = document.createElement('span');
+        editBtn.className = 'edit-task-button';
+        editBtn.textContent = '✎';
+        editBtn.title = 'Редактировать задачу';
+        editBtn.addEventListener('click', () => this.openEditModal(task, displayIndex));
+
         const deleteBtn = document.createElement('span');
         deleteBtn.className = 'delete-task-button';
         deleteBtn.textContent = '×';
@@ -190,6 +196,7 @@ export class TasksForm {
 
         header.appendChild(checkbox);
         header.appendChild(titleSpan);
+        header.appendChild(editBtn);
         header.appendChild(deleteBtn);
 
         const details = document.createElement('div');
@@ -250,43 +257,63 @@ export class TasksForm {
         });
     }
 
-    // --- Модальное окно для добавления задачи ---
+    // ---------- Модальное окно (универсальное) ----------
     openAddModal() {
+        this.editingTaskIndex = null;
+        this.showModal(null);
+    }
+
+    openEditModal(task, filteredIndex) {
+        const originalIndex = this.tasks.findIndex(t => t.createdAt === task.createdAt);
+        if (originalIndex === -1) return;
+        this.editingTaskIndex = originalIndex;
+        this.showModal(this.tasks[originalIndex]);
+    }
+
+    showModal(taskData) {
         if (this.modal) this.modal.remove();
+
+        const isEdit = taskData !== null;
+
         this.modal = document.createElement('div');
         this.modal.className = 'modal-overlay';
         this.modal.innerHTML = `
             <div class="modal-content">
-                <h3>Новая задача</h3>
+                <h3>${isEdit ? 'Редактировать задачу' : 'Новая задача'}</h3>
                 <div class="form-group">
                     <label>Название *</label>
-                    <input type="text" id="modal-title" class="modal-input" placeholder="Введите название">
+                    <input type="text" id="modal-title" class="modal-input" placeholder="Введите название" value="${this.escapeHtml(isEdit ? taskData.title : '')}">
                     <div class="error-message" data-for="title"></div>
                 </div>
                 <div class="form-group">
                     <label>Описание (необязательно)</label>
-                    <textarea id="modal-description" class="modal-input" rows="3" placeholder="Введите описание"></textarea>
+                    <textarea id="modal-description" class="modal-input" rows="3" placeholder="Введите описание">${this.escapeHtml(isEdit ? taskData.description || '' : '')}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Приоритет</label>
                     <select id="modal-priority" class="modal-select">
-                        <option value="low">Низкий</option>
-                        <option value="medium" selected>Средний</option>
-                        <option value="high">Высокий</option>
+                        <option value="low" ${isEdit && taskData.priority === 'low' ? 'selected' : ''}>Низкий</option>
+                        <option value="medium" ${isEdit && taskData.priority === 'medium' ? 'selected' : ''}>Средний</option>
+                        <option value="high" ${isEdit && taskData.priority === 'high' ? 'selected' : ''}>Высокий</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Дедлайн</label>
-                    <input type="datetime-local" id="modal-deadline" class="modal-input">
+                    <input type="datetime-local" id="modal-deadline" class="modal-input" value="${isEdit && taskData.deadline ? taskData.deadline : ''}">
                     <div class="error-message" data-for="deadline"></div>
                 </div>
                 <div class="form-group">
                     <label>Категория</label>
                     <select id="modal-category" class="modal-select">
-                        <option value="work">Работа</option>
-                        <option value="study">Учёба</option>
-                        <option value="home">Дом</option>
+                        <option value="work" ${isEdit && taskData.category === 'work' ? 'selected' : ''}>Работа</option>
+                        <option value="study" ${isEdit && taskData.category === 'study' ? 'selected' : ''}>Учёба</option>
+                        <option value="home" ${isEdit && taskData.category === 'home' ? 'selected' : ''}>Дом</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="modal-completed" ${isEdit && taskData.completed ? 'checked' : ''}> Выполнено
+                    </label>
                 </div>
                 <div class="modal-buttons">
                     <button id="modal-save" class="modal-btn save">Сохранить</button>
@@ -294,29 +321,44 @@ export class TasksForm {
                 </div>
             </div>
         `;
+
         document.body.appendChild(this.modal);
 
         const saveBtn = this.modal.querySelector('#modal-save');
         const cancelBtn = this.modal.querySelector('#modal-cancel');
-        saveBtn.addEventListener('click', () => this.saveNewTask());
+        saveBtn.addEventListener('click', () => this.saveTaskFromModal());
         cancelBtn.addEventListener('click', () => this.modal.remove());
         this.modal.addEventListener('click', (e) => {
             if (e.target === this.modal) this.modal.remove();
         });
     }
 
-    saveNewTask() {
+    escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    saveTaskFromModal() {
         const titleInput = this.modal.querySelector('#modal-title');
         const descriptionInput = this.modal.querySelector('#modal-description');
         const prioritySelect = this.modal.querySelector('#modal-priority');
         const deadlineInput = this.modal.querySelector('#modal-deadline');
         const categorySelect = this.modal.querySelector('#modal-category');
+        const completedCheckbox = this.modal.querySelector('#modal-completed');
 
         const title = titleInput.value.trim();
         const description = descriptionInput.value.trim();
         const priority = prioritySelect.value;
         const deadlineValue = deadlineInput.value;
         const category = categorySelect.value;
+        const completed = completedCheckbox.checked;
 
         let isValid = true;
 
@@ -349,16 +391,26 @@ export class TasksForm {
 
         if (!isValid) return;
 
-        const newTask = {
+        const taskData = {
             title,
             description,
             priority,
             deadline: deadlineValue,
             category,
-            completed: false,
-            createdAt: Date.now()
+            completed,
+            createdAt: null
         };
-        this.tasks.push(newTask);
+
+        if (this.editingTaskIndex !== null) {
+            // Редактирование: сохраняем createdAt оригинальный
+            taskData.createdAt = this.tasks[this.editingTaskIndex].createdAt;
+            this.tasks[this.editingTaskIndex] = taskData;
+        } else {
+            // Новая задача
+            taskData.createdAt = Date.now();
+            this.tasks.push(taskData);
+        }
+
         this.saveToLocalStorage();
         this.applyFiltersAndSort();
         this.modal.remove();
@@ -388,7 +440,6 @@ export class TasksForm {
         const saved = localStorage.getItem('tasks');
         if (saved) {
             this.tasks = JSON.parse(saved);
-            // Добавляем createdAt и description для старых задач
             this.tasks.forEach((task, idx) => {
                 if (!task.createdAt) task.createdAt = Date.now() - idx * 1000;
                 if (!task.description) task.description = '';

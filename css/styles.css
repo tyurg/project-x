@@ -71,7 +71,7 @@ footer {
     position: fixed;
     width: 100%;
     height: auto;
-    min-height: 4rem;
+    min-height: 2rem;
     z-index: 100;
     bottom: 0;
     padding: 0;
@@ -470,4 +470,25 @@ footer a:hover {
     outline: none;
     border-color: rgb(98, 148, 214);
     box-shadow: 0 0 0 0.2rem rgba(98, 148, 214, 0.2);
+}
+
+.edit-task-button {
+    background: rgb(100, 150, 200);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+
+.edit-task-button:hover {
+    background: rgb(80, 120, 170);
+    transform: scale(1.05);
 }

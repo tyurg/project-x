@@ -426,3 +426,48 @@ footer a:hover {
     font-size: 0.85rem;
     color: rgb(39, 60, 70);
 }
+
+/* Панель фильтров и сортировки – улучшенные отступы */
+.filter-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;           /* больше расстояние между группами */
+    margin-bottom: 2rem;   /* отступ от списка задач */
+    padding: 0.5rem 1.5rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 1rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 180px;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+}
+
+.filter-group label {
+    font-weight: 600;
+    white-space: nowrap;
+    color: rgb(39, 60, 70);
+}
+
+.filter-input, .filter-select {
+    padding: 0.5rem 0.8rem;
+    border: 1px solid #c0c0c0;
+    border-radius: 1.5rem;
+    background: white;
+    width: 100%;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.filter-input:focus, .filter-select:focus {
+    outline: none;
+    border-color: rgb(98, 148, 214);
+    box-shadow: 0 0 0 0.2rem rgba(98, 148, 214, 0.2);
+}

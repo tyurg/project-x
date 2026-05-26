@@ -1,8 +1,19 @@
+import { TasksFilter } from './TasksFilter.js';
+
 export class TasksForm {
     constructor() {
         this.tasks = [];
+        this.filteredTasks = [];
         this.listContainer = null;
         this.modal = null;
+        this.filter = null;  // экземпляр TasksFilter
+
+        // Элементы фильтров
+        this.searchInput = null;
+        this.priorityFilter = null;
+        this.statusFilter = null;
+        this.sortSelect = null;
+
         this.init();
     }
 
@@ -26,6 +37,10 @@ export class TasksForm {
         title.textContent = 'Задачи';
         container.appendChild(title);
 
+        // Панель фильтров и сортировки
+        const filterPanel = this.createFilterPanel();
+        container.appendChild(filterPanel);
+
         this.listContainer = document.createElement('div');
         this.listContainer.className = 'tasks-list';
         container.appendChild(this.listContainer);
@@ -40,6 +55,202 @@ export class TasksForm {
         this.loadTasks();
     }
 
+    createFilterPanel() {
+        const panel = document.createElement('div');
+        panel.className = 'filter-panel';
+
+        // Поиск
+        const searchGroup = document.createElement('div');
+        searchGroup.className = 'filter-group';
+        const searchLabel = document.createElement('label');
+        searchLabel.textContent = 'Поиск:';
+        this.searchInput = document.createElement('input');
+        this.searchInput.type = 'text';
+        this.searchInput.placeholder = 'Название, описание, категория...';
+        this.searchInput.className = 'filter-input';
+        this.searchInput.addEventListener('input', () => this.applyFiltersAndSort());
+        searchGroup.appendChild(searchLabel);
+        searchGroup.appendChild(this.searchInput);
+        panel.appendChild(searchGroup);
+
+        // Фильтр по приоритету
+        const priorityGroup = document.createElement('div');
+        priorityGroup.className = 'filter-group';
+        const priorityLabel = document.createElement('label');
+        priorityLabel.textContent = 'Приоритет:';
+        this.priorityFilter = document.createElement('select');
+        this.priorityFilter.className = 'filter-select';
+        this.priorityFilter.innerHTML = `
+            <option value="all">Все</option>
+            <option value="low">Низкий</option>
+            <option value="medium">Средний</option>
+            <option value="high">Высокий</option>
+        `;
+        this.priorityFilter.addEventListener('change', () => this.applyFiltersAndSort());
+        priorityGroup.appendChild(priorityLabel);
+        priorityGroup.appendChild(this.priorityFilter);
+        panel.appendChild(priorityGroup);
+
+        // Фильтр по статусу
+        const statusGroup = document.createElement('div');
+        statusGroup.className = 'filter-group';
+        const statusLabel = document.createElement('label');
+        statusLabel.textContent = 'Статус:';
+        this.statusFilter = document.createElement('select');
+        this.statusFilter.className = 'filter-select';
+        this.statusFilter.innerHTML = `
+            <option value="all">Все</option>
+            <option value="active">Активные</option>
+            <option value="completed">Завершённые</option>
+        `;
+        this.statusFilter.addEventListener('change', () => this.applyFiltersAndSort());
+        statusGroup.appendChild(statusLabel);
+        statusGroup.appendChild(this.statusFilter);
+        panel.appendChild(statusGroup);
+
+        // Сортировка
+        const sortGroup = document.createElement('div');
+        sortGroup.className = 'filter-group';
+        const sortLabel = document.createElement('label');
+        sortLabel.textContent = 'Сортировать:';
+        this.sortSelect = document.createElement('select');
+        this.sortSelect.className = 'filter-select';
+        this.sortSelect.innerHTML = `
+            <option value="deadline_asc">По дедлайну (сначала ближайшие)</option>
+            <option value="priority_desc">По приоритету (сначала важные)</option>
+            <option value="date_desc">По дате добавления (сначала новые)</option>
+        `;
+        this.sortSelect.addEventListener('change', () => this.applyFiltersAndSort());
+        sortGroup.appendChild(sortLabel);
+        sortGroup.appendChild(this.sortSelect);
+        panel.appendChild(sortGroup);
+
+        return panel;
+    }
+
+    applyFiltersAndSort() {
+        if (!this.filter) {
+            this.filter = new TasksFilter(this.tasks);
+        } else {
+            this.filter.setTasks(this.tasks);
+        }
+
+        this.filteredTasks = this.filter.filterAndSort({
+            searchText: this.searchInput?.value || '',
+            priority: this.priorityFilter?.value || 'all',
+            status: this.statusFilter?.value || 'all',
+            sortType: this.sortSelect?.value || 'deadline_asc'
+        });
+
+        this.renderTasksList();
+    }
+
+    renderTasksList() {
+        if (!this.listContainer) return;
+        this.listContainer.innerHTML = '';
+        this.filteredTasks.forEach((task, idx) => {
+            const taskDiv = this.createTaskElement(task, idx);
+            this.listContainer.appendChild(taskDiv);
+        });
+        this.updateDeadlineIndicators();
+    }
+
+    createTaskElement(task, displayIndex) {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'out-task';
+        if (task.completed) taskDiv.classList.add('completed');
+
+        const header = document.createElement('div');
+        header.className = 'task-header';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'task-checkbox';
+        checkbox.checked = task.completed;
+        checkbox.addEventListener('change', () => {
+            task.completed = checkbox.checked;
+            this.saveToLocalStorage();
+            this.applyFiltersAndSort();
+            this.updateDeadlineIndicators();
+        });
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'task-title';
+        titleSpan.textContent = task.title;
+
+        const deleteBtn = document.createElement('span');
+        deleteBtn.className = 'delete-task-button';
+        deleteBtn.textContent = '×';
+        deleteBtn.addEventListener('click', () => {
+            const originalIndex = this.tasks.findIndex(t => t.createdAt === task.createdAt);
+            if (originalIndex !== -1) this.tasks.splice(originalIndex, 1);
+            this.saveToLocalStorage();
+            this.applyFiltersAndSort();
+        });
+
+        header.appendChild(checkbox);
+        header.appendChild(titleSpan);
+        header.appendChild(deleteBtn);
+
+        const details = document.createElement('div');
+        details.className = 'task-details';
+
+        const priorityItem = this.createDetailItem('Приоритет:', 'span', 
+            task.priority === 'low' ? 'Низкий' : task.priority === 'medium' ? 'Средний' : 'Высокий');
+        const deadlineItem = this.createDetailItem('Дедлайн:', 'span', 
+            task.deadline ? new Date(task.deadline).toLocaleString() : 'не указан');
+        const categoryItem = this.createDetailItem('Категория:', 'span', 
+            task.category === 'work' ? 'Работа' : task.category === 'study' ? 'Учёба' : 'Дом');
+        if (task.description) {
+            const descItem = this.createDetailItem('Описание:', 'span', task.description);
+            details.appendChild(descItem);
+        }
+
+        details.appendChild(priorityItem);
+        details.appendChild(deadlineItem);
+        details.appendChild(categoryItem);
+
+        taskDiv.appendChild(header);
+        taskDiv.appendChild(details);
+        return taskDiv;
+    }
+
+    createDetailItem(labelText, tag, value) {
+        const div = document.createElement('div');
+        div.className = 'detail-item';
+        const label = document.createElement('label');
+        label.className = 'detail-label';
+        label.textContent = labelText;
+        const valSpan = document.createElement(tag);
+        valSpan.className = 'detail-value';
+        valSpan.textContent = value;
+        div.appendChild(label);
+        div.appendChild(valSpan);
+        return div;
+    }
+
+    updateDeadlineIndicators() {
+        const now = new Date();
+        const tasksElements = this.listContainer.querySelectorAll('.out-task');
+        tasksElements.forEach((taskEl, idx) => {
+            const task = this.filteredTasks[idx];
+            if (!task || task.completed) {
+                taskEl.classList.remove('deadline-safe', 'deadline-warning', 'deadline-danger');
+                return;
+            }
+            taskEl.classList.remove('deadline-safe', 'deadline-warning', 'deadline-danger');
+            if (!task.deadline) return;
+            const deadlineDate = new Date(task.deadline);
+            if (isNaN(deadlineDate.getTime())) return;
+            const diffMs = deadlineDate - now;
+            const diffHours = diffMs / (1000 * 60 * 60);
+            if (diffMs < 0) taskEl.classList.add('deadline-danger');
+            else if (diffHours <= 24) taskEl.classList.add('deadline-warning');
+            else taskEl.classList.add('deadline-safe');
+        });
+    }
+
+    // --- Модальное окно для добавления задачи ---
     openAddModal() {
         if (this.modal) this.modal.remove();
         this.modal = document.createElement('div');
@@ -51,6 +262,10 @@ export class TasksForm {
                     <label>Название *</label>
                     <input type="text" id="modal-title" class="modal-input" placeholder="Введите название">
                     <div class="error-message" data-for="title"></div>
+                </div>
+                <div class="form-group">
+                    <label>Описание (необязательно)</label>
+                    <textarea id="modal-description" class="modal-input" rows="3" placeholder="Введите описание"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Приоритет</label>
@@ -79,16 +294,12 @@ export class TasksForm {
                 </div>
             </div>
         `;
-
         document.body.appendChild(this.modal);
 
         const saveBtn = this.modal.querySelector('#modal-save');
         const cancelBtn = this.modal.querySelector('#modal-cancel');
-
         saveBtn.addEventListener('click', () => this.saveNewTask());
         cancelBtn.addEventListener('click', () => this.modal.remove());
-
-        // Закрытие по клику на оверлей
         this.modal.addEventListener('click', (e) => {
             if (e.target === this.modal) this.modal.remove();
         });
@@ -96,18 +307,19 @@ export class TasksForm {
 
     saveNewTask() {
         const titleInput = this.modal.querySelector('#modal-title');
+        const descriptionInput = this.modal.querySelector('#modal-description');
         const prioritySelect = this.modal.querySelector('#modal-priority');
         const deadlineInput = this.modal.querySelector('#modal-deadline');
         const categorySelect = this.modal.querySelector('#modal-category');
 
         const title = titleInput.value.trim();
+        const description = descriptionInput.value.trim();
         const priority = prioritySelect.value;
-        const deadline = deadlineInput.value;
+        const deadlineValue = deadlineInput.value;
         const category = categorySelect.value;
 
         let isValid = true;
 
-        // Валидация названия
         if (!title) {
             this.showModalError('title', 'Название обязательно');
             titleInput.classList.add('error');
@@ -117,10 +329,11 @@ export class TasksForm {
             titleInput.classList.remove('error');
         }
 
-        // Валидация дедлайна
-        if (deadline) {
+        if (deadlineValue) {
+            const deadlineDate = new Date(deadlineValue);
             const now = new Date();
-            const deadlineDate = new Date(deadline);
+            now.setSeconds(0, 0);
+            deadlineDate.setSeconds(0, 0);
             if (deadlineDate < now) {
                 this.showModalError('deadline', 'Дедлайн не может быть в прошлом');
                 deadlineInput.classList.add('error');
@@ -136,17 +349,18 @@ export class TasksForm {
 
         if (!isValid) return;
 
-        // Создание задачи
         const newTask = {
             title,
+            description,
             priority,
-            deadline,
+            deadline: deadlineValue,
             category,
-            completed: false
+            completed: false,
+            createdAt: Date.now()
         };
         this.tasks.push(newTask);
         this.saveToLocalStorage();
-        this.renderTasksList();
+        this.applyFiltersAndSort();
         this.modal.remove();
     }
 
@@ -166,107 +380,6 @@ export class TasksForm {
         }
     }
 
-    renderTasksList() {
-        this.listContainer.innerHTML = '';
-        this.tasks.forEach((task, index) => {
-            const taskDiv = this.createTaskElement(task, index);
-            this.listContainer.appendChild(taskDiv);
-        });
-        this.updateDeadlineIndicators();
-    }
-
-    createTaskElement(task, index) {
-        const taskDiv = document.createElement('div');
-        taskDiv.className = 'out-task';
-        if (task.completed) taskDiv.classList.add('completed');
-
-        // Header
-        const header = document.createElement('div');
-        header.className = 'task-header';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'task-checkbox';
-        checkbox.checked = task.completed;
-        checkbox.addEventListener('change', () => {
-            task.completed = checkbox.checked;
-            if (task.completed) taskDiv.classList.add('completed');
-            else taskDiv.classList.remove('completed');
-            this.saveToLocalStorage();
-            this.updateDeadlineIndicators();
-        });
-
-        const titleSpan = document.createElement('span');
-        titleSpan.className = 'task-title';
-        titleSpan.textContent = task.title;
-
-        const deleteBtn = document.createElement('span');
-        deleteBtn.className = 'delete-task-button';
-        deleteBtn.textContent = '×';
-        deleteBtn.addEventListener('click', () => {
-            this.tasks.splice(index, 1);
-            this.saveToLocalStorage();
-            this.renderTasksList();
-        });
-
-        header.appendChild(checkbox);
-        header.appendChild(titleSpan);
-        header.appendChild(deleteBtn);
-
-        // Details
-        const details = document.createElement('div');
-        details.className = 'task-details';
-
-        const priorityItem = this.createDetailItem('Приоритет:', 'span', task.priority === 'low' ? 'Низкий' : task.priority === 'medium' ? 'Средний' : 'Высокий');
-        const deadlineItem = this.createDetailItem('Дедлайн:', 'span', task.deadline ? new Date(task.deadline).toLocaleString() : 'не указан');
-        const categoryItem = this.createDetailItem('Категория:', 'span', task.category === 'work' ? 'Работа' : task.category === 'study' ? 'Учёба' : 'Дом');
-
-        details.appendChild(priorityItem);
-        details.appendChild(deadlineItem);
-        details.appendChild(categoryItem);
-
-        taskDiv.appendChild(header);
-        taskDiv.appendChild(details);
-        return taskDiv;
-    }
-
-    createDetailItem(labelText, tag, value) {
-        const div = document.createElement('div');
-        div.className = 'detail-item';
-        const label = document.createElement('label');
-        label.className = 'detail-label';
-        label.textContent = labelText;
-        const valSpan = document.createElement(tag);
-        valSpan.className = 'detail-value';
-        valSpan.textContent = value;
-        div.appendChild(label);
-        div.appendChild(valSpan);
-        return div;
-    }
-
-    updateDeadlineIndicators() {
-        const tasksElements = this.listContainer.querySelectorAll('.out-task');
-        const now = new Date();
-
-        tasksElements.forEach((taskEl, idx) => {
-            const task = this.tasks[idx];
-            if (!task || task.completed) return;
-
-            taskEl.classList.remove('deadline-safe', 'deadline-warning', 'deadline-danger');
-            if (!task.deadline) return;
-
-            const deadlineDate = new Date(task.deadline);
-            if (isNaN(deadlineDate.getTime())) return;
-
-            const diffMs = deadlineDate - now;
-            const diffHours = diffMs / (1000 * 60 * 60);
-
-            if (diffMs < 0) taskEl.classList.add('deadline-danger');
-            else if (diffHours <= 24) taskEl.classList.add('deadline-warning');
-            else taskEl.classList.add('deadline-safe');
-        });
-    }
-
     saveToLocalStorage() {
         localStorage.setItem('tasks', JSON.stringify(this.tasks));
     }
@@ -275,9 +388,14 @@ export class TasksForm {
         const saved = localStorage.getItem('tasks');
         if (saved) {
             this.tasks = JSON.parse(saved);
+            // Добавляем createdAt и description для старых задач
+            this.tasks.forEach((task, idx) => {
+                if (!task.createdAt) task.createdAt = Date.now() - idx * 1000;
+                if (!task.description) task.description = '';
+            });
         } else {
             this.tasks = [];
         }
-        this.renderTasksList();
+        this.applyFiltersAndSort();
     }
 }

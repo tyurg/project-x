@@ -24,40 +24,42 @@ export class TasksForm {
             console.error('Элемент #template > div не найден');
             return;
         }
-        
+
+        // Удаляем старые обработчики, чтобы избежать дублирования
         listTasks.removeEventListener('click', this.handleClick);
-        
+        listTasks.removeEventListener('change', this.handleChange);
+        listTasks.removeEventListener('input', this.handleInput);
+
+        // Обработчик кликов (добавление, удаление, переключение чекбокса)
         this.handleClick = (e) => {
             // Добавление новой задачи
             if (e.target.classList.contains('add-task-button')) {
                 let newTask = taskWrapper.cloneNode(true);
-                const input = newTask.querySelector('input');
-                if (input) input.value = '';
-                
-                // Сбрасываем состояние чекбокса у новой задачи
+                // Сброс значений
+                const titleInput = newTask.querySelector('.task-title');
+                if (titleInput) titleInput.value = '';
+                const prioritySelect = newTask.querySelector('.task-priority');
+                if (prioritySelect) prioritySelect.value = 'medium';
+                const deadlineInput = newTask.querySelector('.task-deadline');
+                if (deadlineInput) deadlineInput.value = '';
+                const categorySelect = newTask.querySelector('.task-category');
+                if (categorySelect) categorySelect.value = 'work';
                 const checkbox = newTask.querySelector('.task-checkbox');
                 if (checkbox) checkbox.checked = false;
-                
-                // Убираем класс completed у новой задачи
                 newTask.classList.remove('completed');
-                
+
                 listTasks.insertBefore(newTask, e.target);
-                
-                // Сохраняем задачи в localStorage
                 this.saveTasks();
             }
-            
             // Удаление задачи
             else if (e.target.classList.contains('delete-task-button')) {
                 const taskToRemove = e.target.closest('.out-task');
                 if (taskToRemove && listTasks.contains(taskToRemove)) {
                     listTasks.removeChild(taskToRemove);
-                    // Сохраняем задачи в localStorage
                     this.saveTasks();
                 }
             }
-            
-            // Отметка задачи как выполненной/невыполненной
+            // Переключение состояния выполнения (чекбокс)
             else if (e.target.classList.contains('task-checkbox')) {
                 const taskItem = e.target.closest('.out-task');
                 if (taskItem) {
@@ -66,90 +68,102 @@ export class TasksForm {
                     } else {
                         taskItem.classList.remove('completed');
                     }
-                    // Сохраняем задачи в localStorage
                     this.saveTasks();
                 }
             }
-            
-            // Изменение текста задачи
-            else if (e.target.classList.contains('task-input')) {
+        };
+
+        // Обработчик изменений полей (select, datetime-local)
+        this.handleChange = (e) => {
+            if (e.target.classList.contains('task-priority') ||
+                e.target.classList.contains('task-category') ||
+                e.target.classList.contains('task-deadline')) {
                 this.saveTasks();
             }
         };
-        
+
         listTasks.addEventListener('click', this.handleClick);
-        
-        // Добавляем обработчик изменения текста в полях ввода
-        const inputs = listTasks.querySelectorAll('.task-input');
-        inputs.forEach(input => {
-            input.removeEventListener('change', this.handleInputChange);
-            input.addEventListener('change', this.handleInputChange = () => this.saveTasks());
-        });
-        
-        // Загружаем сохраненные задачи
+        listTasks.addEventListener('change', this.handleChange);
+        listTasks.addEventListener('input', this.handleInput);
+
+
         this.loadTasks();
     }
-    
-    // Сохранение задач в localStorage
+
     saveTasks() {
         const listTasks = document.querySelector('#wrapper > div');
         if (!listTasks) return;
-        
+
         const tasks = [];
         const taskItems = listTasks.querySelectorAll('.out-task:not(#template .out-task)');
-        
+
         taskItems.forEach(task => {
-            const input = task.querySelector('.task-input');
-            const checkbox = task.querySelector('.task-checkbox');
-            if (input) {
-                tasks.push({
-                    text: input.value,
-                    completed: checkbox ? checkbox.checked : false
-                });
-            }
+            const title = task.querySelector('.task-title')?.value || '';
+            const priority = task.querySelector('.task-priority')?.value || 'medium';
+            const deadline = task.querySelector('.task-deadline')?.value || '';
+            const category = task.querySelector('.task-category')?.value || 'work';
+            const completed = task.querySelector('.task-checkbox')?.checked || false;
+
+            tasks.push({
+                title,
+                priority,
+                deadline,
+                category,
+                completed
+            });
         });
-        
+
         localStorage.setItem('tasks', JSON.stringify(tasks));
         console.log('Задачи сохранены');
     }
-    
-    // Загрузка задач из localStorage
+
     loadTasks() {
         const savedTasks = localStorage.getItem('tasks');
         if (!savedTasks) return;
-        
+
         const tasks = JSON.parse(savedTasks);
         const listTasks = document.querySelector('#wrapper > div');
         const taskWrapper = document.querySelector('#template > div');
-        
+
         if (!listTasks || !taskWrapper) return;
-        
-        // Очищаем текущие задачи (сохраняем только кнопку добавления)
+
+        // Сохраняем кнопку добавления, чтобы потом её вернуть
         const addButton = listTasks.querySelector('.add-task-button');
         listTasks.innerHTML = '';
-        
-        // Восстанавливаем задачи
+
         tasks.forEach(task => {
             let newTask = taskWrapper.cloneNode(true);
-            const input = newTask.querySelector('.task-input');
+
+            const titleInput = newTask.querySelector('.task-title');
+            if (titleInput) titleInput.value = task.title || '';
+
+            const prioritySelect = newTask.querySelector('.task-priority');
+            if (prioritySelect) prioritySelect.value = task.priority || 'medium';
+
+            const deadlineInput = newTask.querySelector('.task-deadline');
+            if (deadlineInput) deadlineInput.value = task.deadline || '';
+
+            const categorySelect = newTask.querySelector('.task-category');
+            if (categorySelect) categorySelect.value = task.category || 'work';
+
             const checkbox = newTask.querySelector('.task-checkbox');
-            
-            if (input) input.value = task.text;
-            if (checkbox) checkbox.checked = task.completed;
-            
+            if (checkbox) checkbox.checked = task.completed || false;
+
             if (task.completed) {
                 newTask.classList.add('completed');
+            } else {
+                newTask.classList.remove('completed');
             }
-            
+
             listTasks.appendChild(newTask);
         });
-        
-        // Добавляем кнопку "Добавить задачу" обратно
+
+        // Восстанавливаем кнопку добавления
         const newAddButton = document.createElement('span');
         newAddButton.className = 'add-task-button';
-        newAddButton.textContent = 'Добавить задачу';
+        newAddButton.textContent = '+ Добавить задачу';
         listTasks.appendChild(newAddButton);
-        
+
         console.log('Задачи загружены');
     }
 }

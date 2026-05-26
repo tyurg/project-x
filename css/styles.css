@@ -127,23 +127,18 @@ footer a:hover {
 
 .out-task {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    padding: 0.5rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 0.5rem;
     transition: all 0.3s ease;
 }
 
-.out-task.completed {
-    background-color: rgba(98, 148, 214, 0.2);
-    opacity: 0.8;
-}
-
-.out-task.completed .task-input {
-    text-decoration: line-through;
-    color: rgb(114, 128, 139);
+.task-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .task-checkbox {
@@ -152,23 +147,23 @@ footer a:hover {
     cursor: pointer;
     margin: 0;
     accent-color: rgb(98, 148, 214);
+    flex-shrink: 0;
 }
 
-.out-task input.task-input {
+.task-title {
     background-color: aliceblue;
     border-radius: 0.5rem;
     height: 2rem;
-    margin: 0;
-    color: rgb(39, 60, 70);                  
-    border: 0.0625rem solid rgb(114, 128, 139);       
-    padding: 1rem 1rem;          
+    color: rgb(39, 60, 70);
+    border: 0.0625rem solid rgb(114, 128, 139);
+    padding: 0 0.75rem;
     font-size: 1rem;
     width: 100%;
     box-sizing: border-box;
     flex: 1;
 }
 
-.out-task input.task-input:focus {
+.task-title:focus {
     outline: none;
     border-color: rgb(98, 148, 214);
     box-shadow: 0 0 0.3125rem rgba(98, 148, 214, 0.3);
@@ -176,7 +171,7 @@ footer a:hover {
 
 .delete-task-button {
     background: rgb(218, 89, 89);
-    width: 3rem;
+    width: 2.5rem;
     height: 2rem;
     border-radius: 0.5rem;
     color: aliceblue;
@@ -187,11 +182,73 @@ footer a:hover {
     font-weight: bold;
     transition: all 0.2s ease;
     flex-shrink: 0;
+    font-size: 1.2rem;
 }
 
 .delete-task-button:hover {
     background: rgb(200, 70, 70);
     transform: scale(1.05);
+}
+
+.task-description {
+    width: 100%;
+    background-color: aliceblue;
+    border-radius: 0.5rem;
+    color: rgb(39, 60, 70);
+    border: 0.0625rem solid rgb(114, 128, 139);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.task-description:focus {
+    outline: none;
+    border-color: rgb(98, 148, 214);
+    box-shadow: 0 0 0.3125rem rgba(98, 148, 214, 0.3);
+}
+
+.task-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.25rem;
+}
+
+.task-priority,
+.task-category,
+.task-deadline {
+    background-color: aliceblue;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border: 0.0625rem solid rgb(114, 128, 139);
+    color: rgb(39, 60, 70);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.task-deadline {
+    font-family: inherit;
+}
+
+
+.out-task.completed {
+    background-color: rgba(98, 148, 214, 0.2);
+    opacity: 0.8;
+}
+
+.out-task.completed .task-title,
+.out-task.completed .task-description {
+    text-decoration: line-through;
+    color: rgb(114, 128, 139);
+}
+
+.out-task.completed .task-priority,
+.out-task.completed .task-category,
+.out-task.completed .task-deadline {
+    opacity: 0.7;
 }
 
 .add-task-button {
@@ -214,6 +271,7 @@ footer a:hover {
     transform: scale(1.02);
 }
 
+
 .tasks-counter {
     text-align: center;
     margin-top: 1.5rem;
@@ -225,4 +283,37 @@ footer a:hover {
 
 #template {
     display: none;
+}
+
+.task-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+}
+
+.detail-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgb(39, 60, 70);
+    white-space: nowrap;
+}
+
+.task-priority,
+.task-category,
+.task-deadline {
+    background-color: aliceblue;
+    border-radius: 0.5rem;
+    padding: 0.3rem 0.5rem;
+    border: 0.0625rem solid rgb(114, 128, 139);
+    font-size: 0.85rem;
 }

@@ -14,11 +14,34 @@
     <div id="wrapper">
         <h3>Задачи</h3>
         <div class="tasks-list">
-            
             <div class="out-task">
-                <input type="checkbox" class="task-checkbox">
-                <input type="text" class="task-input" value="Пример задачи">
-                <span class="delete-task-button">×</span>
+                <div class="task-header">
+                    <input type="checkbox" class="task-checkbox">
+                    <input type="text" class="task-title" placeholder="Название задачи" value="Пример задачи">
+                    <span class="delete-task-button">×</span>
+                </div>
+                <div class="task-details">
+                    <div class="detail-item">
+                        <label class="detail-label">Приоритет:</label>
+                        <select class="task-priority">
+                            <option value="low">Низкий</option>
+                            <option value="medium" selected>Средний</option>
+                            <option value="high">Высокий</option>
+                        </select>
+                    </div>
+                    <div class="detail-item">
+                        <label class="detail-label">Дедлайн:</label>
+                        <input type="datetime-local" class="task-deadline">
+                    </div>
+                    <div class="detail-item">
+                        <label class="detail-label">Категория:</label>
+                        <select class="task-category">
+                            <option value="work">Работа</option>
+                            <option value="study">Учёба</option>
+                            <option value="home">Дом</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             <span class="add-task-button">+ Добавить задачу</span>
         </div>
@@ -26,9 +49,33 @@
 
     <div id="template" style="display: none;">
         <div class="out-task">
-            <input type="checkbox" class="task-checkbox">
-            <input type="text" class="task-input" value="">
-            <span class="delete-task-button">×</span>
+            <div class="task-header">
+                <input type="checkbox" class="task-checkbox">
+                <input type="text" class="task-title" placeholder="Название задачи">
+                <span class="delete-task-button">×</span>
+            </div>
+           <div class="task-details">
+                <div class="detail-item">
+                    <label class="detail-label">Приоритет:</label>
+                    <select class="task-priority">
+                        <option value="low">Низкий</option>
+                        <option value="medium" selected>Средний</option>
+                        <option value="high">Высокий</option>
+                    </select>
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Дедлайн:</label>
+                    <input type="datetime-local" class="task-deadline">
+                </div>
+                <div class="detail-item">
+                    <label class="detail-label">Категория:</label>
+                    <select class="task-category">
+                        <option value="work">Работа</option>
+                        <option value="study">Учёба</option>
+                        <option value="home">Дом</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 

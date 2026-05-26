@@ -57,8 +57,8 @@ nav a {
     color: rgb(39, 60, 70);
     text-decoration: none;
     font-weight: 500;
-    font-size: 1.1rem;
-    padding: 0.5rem 1rem;
+    font-size: 1.0.875rem;
+    padding: 0.5rem 0.875rem;
 }
 
 nav a:hover {
@@ -81,7 +81,7 @@ footer {
 }
 
 footer p {
-    font-size: 1rem;
+    font-size: 0.875rem;
     text-align: center;
 }
 
@@ -157,7 +157,7 @@ footer a:hover {
     color: rgb(39, 60, 70);
     border: 0.0625rem solid rgb(114, 128, 139);
     padding: 0 0.75rem;
-    font-size: 1rem;
+    font-size: 0.875rem;
     width: 100%;
     box-sizing: border-box;
     flex: 1;
@@ -262,7 +262,7 @@ footer a:hover {
     cursor: pointer;
     font-weight: bold;
     background: rgb(98, 148, 214);
-    margin: 1rem auto 0;
+    margin: 0.875rem auto 0;
     transition: all 0.2s ease;
 }
 
@@ -275,7 +275,7 @@ footer a:hover {
 .tasks-counter {
     text-align: center;
     margin-top: 1.5rem;
-    padding-top: 1rem;
+    padding-top: 0.875rem;
     color: rgb(39, 60, 70);
     font-size: 0.9rem;
     border-top: 0.0625rem solid rgb(182, 197, 211);
@@ -288,7 +288,7 @@ footer a:hover {
 .task-details {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.875rem;
     margin-top: 0.5rem;
 }
 
@@ -319,20 +319,110 @@ footer a:hover {
 }
 
 .out-task.deadline-safe {
-    border-left: 6px solid rgb(89, 218, 106);
+    border-left: 0.875rem solid rgb(89, 218, 89);
 }
 
 .out-task.deadline-warning {
-    border-left: 6px solid rgb(218, 216, 89);
+    border-left: 0.875rem solid rgb(218, 216, 89);
 }
 
 .out-task.deadline-danger {
-    border-left: 6px solid rgb(218, 89, 89);
+    border-left: 0.875rem solid rgb(218, 89, 89);
 }
 
 .out-task {
-    border-left-width: 6px;
+    border-left-width: 0.875rem;
     border-left-style: solid;
     border-left-color: transparent;
     transition: border-left-color 0.2s;
+}
+
+/* Модальное окно */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+}
+
+.modal-input, .modal-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: none;
+}
+
+.error-message.visible {
+    display: block;
+}
+
+.modal-input.error, .modal-select.error {
+    border-color: red;
+    background-color: #fff3f3;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.modal-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.modal-btn.save {
+    background: rgb(98, 148, 214);
+    color: white;
+}
+
+.modal-btn.cancel {
+    background: #ccc;
+}
+
+.detail-value {
+    font-size: 0.85rem;
+    color: rgb(39, 60, 70);
 }

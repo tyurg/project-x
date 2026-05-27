@@ -33,33 +33,33 @@ export class TasksModal {
                 <h3>${isEdit ? 'Редактировать задачу' : 'Новая задача'}</h3>
                 <div class="form-group">
                     <label>Название *</label>
-                    <input type="text" id="modal-title" class="modal-input" placeholder="Введите название" value="${this.escapeHtml(isEdit ? taskData.title : '')}" maxlength="100">
+                    <input type="text" id="modal-title" class="modal-input" placeholder="Введите название" value="${this.escapeHtml(isEdit ? taskData.title : '')}" maxlength="100" autocomplete="off">
                     <div class="error-message" data-for="title"></div>
                 </div>
                 <div class="form-group">
                     <label>Описание (необязательно)</label>
-                    <textarea id="modal-description" class="modal-input" rows="3" placeholder="Введите описание" maxlength="500">${this.escapeHtml(isEdit ? taskData.description || '' : '')}</textarea>
+                    <textarea id="modal-description" class="modal-input" rows="3" placeholder="Введите описание" maxlength="500" autocomplete="off">${this.escapeHtml(isEdit ? taskData.description || '' : '')}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Приоритет</label>
-                    <select id="modal-priority" class="modal-select">
+                    <select id="modal-priority" class="modal-select" autocomplete="off">
                         ${prioritiesOptions}
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Дедлайн</label>
-                    <input type="datetime-local" id="modal-deadline" class="modal-input" value="${isEdit && taskData.deadline ? taskData.deadline : ''}">
+                    <input type="datetime-local" id="modal-deadline" class="modal-input" value="${isEdit && taskData.deadline ? taskData.deadline : ''}" autocomplete="off">
                     <div class="error-message" data-for="deadline"></div>
                 </div>
                 <div class="form-group">
                     <label>Категория</label>
-                    <select id="modal-category" class="modal-select">
+                    <select id="modal-category" class="modal-select" autocomplete="off">
                         ${categoriesOptions}
                     </select>
                 </div>
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="modal-completed" ${isEdit && taskData.completed ? 'checked' : ''}> Выполнено
+                        <input type="checkbox" id="modal-completed" ${isEdit && taskData.completed ? 'checked' : ''} autocomplete="off"> Выполнено
                     </label>
                 </div>
                 <div class="modal-buttons">

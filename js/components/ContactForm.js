@@ -28,28 +28,28 @@ export class ContactForm {
                 <form class="contact-form" id="contact-form">
                     <div class="form-group">
                         <label for="fio">ФИО (только буквы)</label>
-                        <input type="text" id="fio" name="fio" placeholder="Иванов Иван Иванович" maxlength="50" required>
+                        <input type="text" id="fio" name="fio" placeholder="Иванов Иван Иванович" maxlength="50" autocomplete="name" required>
                         <div class="field-error" id="fio-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="desired-date">Желаемая дата связи</label>
-                        <input type="date" id="desired-date" name="desired-date" min="${this.today}" required>
+                        <input type="date" id="desired-date" name="desired-date" min="${this.today}" autocomplete="off" required>
                         <div class="field-error" id="date-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="phone">Номер телефона</label>
-                        <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" required>
+                        <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" autocomplete="tel" required>
                         <div class="field-error" id="phone-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="photo-upload">Загрузить фотографию</label>
-                        <input type="file" id="photo-upload" name="photo-upload" accept="image/*">
+                        <input type="file" id="photo-upload" name="photo-upload" accept="image/*" autocomplete="off">
                         <div id="photo-preview" class="photo-preview"></div>
                         <div class="field-error" id="photo-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="message">Сообщение (необязательно)</label>
-                        <textarea id="message" name="message" rows="4" placeholder="Ваше сообщение"></textarea>
+                        <textarea id="message" name="message" rows="4" placeholder="Ваше сообщение" autocomplete="off"></textarea>
                     </div>
                     <button type="submit" class="submit-btn" id="contact-submit">Отправить</button>
                 </form>

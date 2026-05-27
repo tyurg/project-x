@@ -60,8 +60,27 @@ export class TasksForm {
         addBtn.addEventListener('click', () => this.openAddModal());
         container.appendChild(addBtn);
 
+        const deleteCompletedBtn = document.createElement('button');
+        deleteCompletedBtn.className = 'delete-completed-button';
+        deleteCompletedBtn.textContent = 'Удалить выполненные задачи';
+        deleteCompletedBtn.addEventListener('click', () => this.deleteCompletedTasks());
+        container.appendChild(deleteCompletedBtn);
+
         wrapper.appendChild(container);
         this.loadTasks();
+    }
+
+    deleteCompletedTasks() {
+        const completedTasks = this.tasks.filter(task => task.completed);
+        if (completedTasks.length === 0) {
+            alert('Нет выполненных задач для удаления');
+            return;
+        }
+        if (confirm(`Вы уверены, что хотите удалить ${completedTasks.length} выполненных задач?`)) {
+            this.tasks = this.tasks.filter(task => !task.completed);
+            this.saveToLocalStorage();
+            this.applyFiltersAndSort();
+        }
     }
 
     createFilterPanel() {

@@ -1,11 +1,3 @@
-@font-face {
-    font-family: 'BookmanOldStyle';
-    src: url('../fonts/bookmanoldstyle_bold.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
 * {
     font-family: 'Courier New', Courier, monospace;
 }
@@ -529,4 +521,25 @@ footer a:hover {
 .change-user-btn:disabled {
     background: #aaa;
     cursor: not-allowed;
+}
+
+.delete-completed-button {
+    width: 50%;
+    height: 2rem;
+    border-radius: 0.5rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    background: rgb(218, 89, 89);
+    margin: 0.875rem auto 0;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.delete-completed-button:hover {
+    background: rgb(200, 70, 70);
+    transform: scale(1.02);
 }

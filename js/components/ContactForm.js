@@ -76,7 +76,6 @@ export class ContactForm {
     }
 
     initValidation() {
-        // Валидация на blur и input
         this.fioInput.addEventListener('blur', () => this.validateFIO(true));
         this.fioInput.addEventListener('input', () => this.validateFIO(false));
 
@@ -86,8 +85,8 @@ export class ContactForm {
         this.dateInput.addEventListener('change', () => this.validateDate());
         this.photoInput.addEventListener('change', () => this.validatePhoto());
 
-        // Блокировка кнопки при загрузке
         this.updateSubmitButton();
+        this.handleSubmit();
     }
 
     validateFIO(showErrors = true) {
@@ -103,7 +102,6 @@ export class ContactForm {
             this.errorDivs.fio.style.display = error ? 'block' : 'none';
             this.fioInput.style.borderColor = error ? 'red' : '#aaa';
         } else {
-            // скрываем ошибку, пока пользователь печатает
             this.errorDivs.fio.style.display = 'none';
             this.fioInput.style.borderColor = '#aaa';
         }
@@ -119,7 +117,6 @@ export class ContactForm {
             if (digits[0] !== '7') digits = '7' + digits;
             if (digits.length !== 11) error = 'Номер должен содержать ровно 11 цифр';
         } else {
-            // поле обязательно – если пусто, ошибка
             error = 'Введите номер телефона';
         }
 
@@ -160,7 +157,6 @@ export class ContactForm {
             if (!file.type.startsWith('image/')) error = 'Файл должен быть изображением';
             else if (file.size > 5 * 1024 * 1024) error = 'Размер не более 5 МБ';
             else {
-                // Превью
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     this.photoPreview.innerHTML = `<img src="${e.target.result}" alt="Предпросмотр">`;
@@ -185,28 +181,41 @@ export class ContactForm {
         this.submitBtn.style.cursor = hasErrors ? 'not-allowed' : 'pointer';
     }
 
+    showNotification(message, type = 'success') {
+        const existingToast = document.querySelector('.toast-notification');
+        if (existingToast) existingToast.remove();
+
+        const toast = document.createElement('div');
+        toast.className = `toast-notification ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
     handleSubmit() {
         this.form.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            // принудительно проверяем все поля с отображением ошибок
             const isFioValid = this.validateFIO(true);
             const isPhoneValid = this.validatePhone(true);
             const isDateValid = this.validateDate();
             const isPhotoValid = this.validatePhoto();
 
             if (isFioValid && isPhoneValid && isDateValid && isPhotoValid) {
-                alert('Форма успешно отправлена!');
+                this.showNotification('Форма успешно отправлена!', 'success');
                 this.form.reset();
                 this.photoPreview.innerHTML = '';
-                // Очистить ошибки
                 for (let key in this.errorDivs) {
                     this.errorDivs[key].textContent = '';
                     this.errorDivs[key].style.display = 'none';
                 }
                 this.updateSubmitButton();
             } else {
-                alert('Исправьте ошибки в форме');
+                this.showNotification('Исправьте ошибки в форме', 'error');
             }
         });
     }

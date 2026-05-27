@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+
 * {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
@@ -319,6 +321,7 @@ footer a:hover {
     border-left-color: #da5959;
 }
 
+/* Модальное окно – чёрное затемнение */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -333,20 +336,23 @@ footer a:hover {
 }
 
 .modal-content {
-    background: #fff;
+    background: #ffffff;
     padding: 2rem;
     border-radius: 1rem;
     width: 90%;
     max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+    border: 1px solid #b6c5d3;
 }
 
 .modal-content h3 {
     margin-top: 0;
     margin-bottom: 1rem;
     text-align: center;
+    color: #273c46;
+    font-weight: bold;
 }
 
 .form-group {
@@ -357,6 +363,7 @@ footer a:hover {
     display: block;
     margin-bottom: 0.25rem;
     font-weight: bold;
+    color: #273c46;
 }
 
 .modal-input,
@@ -364,9 +371,19 @@ footer a:hover {
     width: 100%;
     max-width: 100%;
     padding: 0.5rem;
-    border: 0.0625rem solid #ccc;
+    border: 0.0625rem solid #b6c5d3;
     border-radius: 0.5rem;
     box-sizing: border-box;
+    background-color: #f0f8ff;
+    color: #273c46;
+    transition: 0.2s;
+}
+
+.modal-input:focus,
+.modal-select:focus {
+    outline: none;
+    border-color: #6294d6;
+    box-shadow: 0 0 0 0.2rem rgba(98, 148, 214, 0.2);
 }
 
 .modal-input {
@@ -374,7 +391,7 @@ footer a:hover {
 }
 
 .error-message {
-    color: #f00;
+    color: #da5959;
     font-size: 0.75rem;
     margin-top: 0.25rem;
     display: none;
@@ -386,7 +403,7 @@ footer a:hover {
 
 .modal-input.error,
 .modal-select.error {
-    border-color: #f00;
+    border-color: #da5959;
     background-color: #fff3f3;
 }
 
@@ -402,6 +419,8 @@ footer a:hover {
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
 }
 
 .modal-btn.save {
@@ -409,8 +428,17 @@ footer a:hover {
     color: #fff;
 }
 
+.modal-btn.save:hover {
+    background: #4e80c2;
+}
+
 .modal-btn.cancel {
-    background: #ccc;
+    background: #e0e8f0;
+    color: #273c46;
+}
+
+.modal-btn.cancel:hover {
+    background: #cbd8e3;
 }
 
 .filter-panel {
@@ -718,7 +746,7 @@ footer a:hover {
 }
 
 .field-error {
-    color: #f00;
+    color: #da5959;
     font-size: 0.7rem;
     margin-top: 0.2rem;
     display: none;
@@ -727,7 +755,33 @@ footer a:hover {
 .form-group input.error,
 .form-group select.error,
 .form-group textarea.error {
-    border-color: #f00;
+    border-color: #da5959;
+}
+
+/* Уведомления (тосты) */
+.toast-notification {
+    position: fixed;
+    bottom: 5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4caf50;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    z-index: 3000;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+}
+
+.toast-notification.error {
+    background: #da5959;
+}
+
+.toast-notification.fade-out {
+    opacity: 0;
 }
 
 @media (max-width: 1023px) and (min-width: 768px) {

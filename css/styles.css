@@ -575,3 +575,147 @@ footer a:hover {
     background: rgb(200, 70, 70);
     transform: scale(1.02);
 }
+
+/* Стили для страницы помощи */
+.help-container {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 1.25rem;
+}
+
+.help-info {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.help-info h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: rgb(39, 60, 70);
+}
+
+.help-section {
+    margin-bottom: 1.5rem;
+}
+
+.help-section h3 {
+    margin-bottom: 0.5rem;
+    color: rgb(39, 60, 70);
+    border-left: 0.25rem solid rgb(98, 148, 214);
+    padding-left: 0.75rem;
+}
+
+.help-section ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.help-section li {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.deadline-badge {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.125rem;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+.deadline-safe-demo {
+    background: rgb(89, 218, 89);
+}
+
+.deadline-warning-demo {
+    background: rgb(218, 216, 89);
+}
+
+.deadline-danger-demo {
+    background: rgb(218, 89, 89);
+}
+
+/* Стили для формы обратной связи */
+.contact-section {
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.contact-section h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: rgb(39, 60, 70);
+}
+
+.contact-description {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: rgb(39, 60, 70);
+}
+
+.contact-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    color: rgb(39, 60, 70);
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 0.0625rem solid #ccc;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    font-family: inherit;
+    background-color: aliceblue;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: rgb(98, 148, 214);
+    box-shadow: 0 0 0.3125rem rgba(98, 148, 214, 0.3);
+}
+
+.contact-form textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    background: rgb(98, 148, 214);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+    display: block;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.submit-btn:hover {
+    background: rgb(78, 128, 194);
+}
+
+@media (max-width: 700px) {
+    .help-container {
+        padding: 0.75rem;
+    }
+    .submit-btn {
+        width: 80%;
+    }
+}

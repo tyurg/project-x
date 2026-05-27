@@ -33,7 +33,7 @@ export class ProfilePage extends BasePage {
                     <img src="${this.userData.avatar}" alt="Avatar" class="profile-avatar">
                     <h2>${this.userData.name}</h2>
                     <p><strong>Email:</strong> ${this.userData.email}</p>
-                    <p><strong>Location:</strong> ${this.userData.location}</p>
+                    <p><strong>Местоположение:</strong> ${this.userData.location}</p>
                     <button id="change-user-btn" class="change-user-btn">Сменить пользователя</button>
                 </div>
             </div>

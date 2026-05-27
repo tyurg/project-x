@@ -14,7 +14,8 @@ export class TasksFilter {
             const lowerSearch = searchText.toLowerCase();
             result = result.filter(task => {
                 const categoryText = task.category === 'work' ? 'работа' :
-                                     task.category === 'study' ? 'учёба' : 'дом';
+                                     task.category === 'study' ? 'учёба' :
+                                     task.category === 'home' ? 'дом' : 'прочее';
                 return (task.title && task.title.toLowerCase().includes(lowerSearch)) ||
                        (task.description && task.description.toLowerCase().includes(lowerSearch)) ||
                        categoryText.includes(lowerSearch);

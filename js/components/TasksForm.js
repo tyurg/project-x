@@ -231,7 +231,9 @@ export class TasksForm {
         const deadlineItem = this.createDetailItem('Дедлайн:', 'span',
             task.deadline ? new Date(task.deadline).toLocaleString() : 'не указан');
         const categoryItem = this.createDetailItem('Категория:', 'span',
-            task.category === 'work' ? 'Работа' : task.category === 'study' ? 'Учёба' : 'Дом');
+            task.category === 'work' ? 'Работа' : 
+            task.category === 'study' ? 'Учёба' : 
+            task.category === 'home' ? 'Дом' : 'Прочее');
         if (task.description) {
             const descItem = this.createDetailItem('Описание:', 'span', task.description);
             details.appendChild(descItem);
@@ -331,6 +333,7 @@ export class TasksForm {
                         <option value="work" ${isEdit && taskData.category === 'work' ? 'selected' : ''}>Работа</option>
                         <option value="study" ${isEdit && taskData.category === 'study' ? 'selected' : ''}>Учёба</option>
                         <option value="home" ${isEdit && taskData.category === 'home' ? 'selected' : ''}>Дом</option>
+                        <option value="other" ${isEdit && taskData.category === 'other' ? 'selected' : ''}>Прочее</option>
                     </select>
                 </div>
                 <div class="form-group">

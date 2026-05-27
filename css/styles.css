@@ -57,6 +57,31 @@ nav a:hover {
     color: rgb(114, 128, 139);
 }
 
+.logo {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.logo a {
+    display: block;
+    line-height: 0;
+}
+
+.logo img {
+    height: 2rem;
+    width: auto;
+    max-width: 100%;
+    display: block;
+}
+
+/* Чтобы меню не наезжало на логотип */
+.nav-list {
+    margin: 0 4rem;
+}
+
 footer {
     background-color: aliceblue;
     color: rgb(39, 60, 70);
@@ -317,6 +342,8 @@ footer a:hover {
     border-radius: 1rem;
     width: 90%;
     max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
 }
 
@@ -338,10 +365,15 @@ footer a:hover {
 .modal-input,
 .modal-select {
     width: 100%;
+    max-width: 100%;
     padding: 0.5rem;
     border: 0.0625rem solid #ccc;
     border-radius: 0.5rem;
     box-sizing: border-box;
+}
+
+.modal-input {
+    resize: vertical;
 }
 
 .error-message {

@@ -30,6 +30,10 @@ export class Header {
         const isGitHubPages = window.location.hostname.includes('github.io');
         const repoName = isGitHubPages ? `/${window.location.pathname.split('/')[1]}/` : '/';
 
+        // Изменено: logo.png → logo.svg
+        const logoSrc = `${repoName}img/logo.svg`;
+        const homeLink = `${repoName}tasks.html`;
+
         const navItemsHTML = NAVIGATION_LINKS.map(({ href, title, target = '_self' }) => {
             const fileName = href.replace('./', '');
             const correctHref = `${repoName}${fileName}`;
@@ -40,6 +44,11 @@ export class Header {
 
         return `
             <nav class="main-nav">
+                <div class="logo">
+                    <a href="${homeLink}">
+                        <img src="${logoSrc}" alt="Логотип">
+                    </a>
+                </div>
                 <input type="checkbox" id="menu-toggle">
                 <label for="menu-toggle" class="menu-icon">
                     <span></span><span></span><span></span>

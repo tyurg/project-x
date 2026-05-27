@@ -33,6 +33,7 @@ export class ContactForm {
                     <div class="form-group">
                         <label for="photo-upload">Загрузить фотографию</label>
                         <input type="file" id="photo-upload" name="photo-upload" accept="image/*">
+                        <div id="photo-preview" class="photo-preview"></div>
                     </div>
                     <div class="form-group">
                         <label for="message">Сообщение (необязательно)</label>
@@ -54,6 +55,7 @@ export class ContactForm {
         this.dateInput = document.getElementById('desired-date');
         this.photoInput = document.getElementById('photo-upload');
         this.messageInput = document.getElementById('message');
+        this.photoPreview = document.getElementById('photo-preview');
         if (this.dateInput) this.dateInput.min = this.today;
     }
 
@@ -169,17 +171,31 @@ export class ContactForm {
         if (!this.photoInput) return;
         this.photoInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (!file) return;
+            if (!file) {
+                if (this.photoPreview) this.photoPreview.innerHTML = '';
+                return;
+            }
             if (!file.type.startsWith('image/')) {
                 alert('Пожалуйста, выберите файл изображения.');
                 this.photoInput.value = '';
+                if (this.photoPreview) this.photoPreview.innerHTML = '';
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
                 alert('Размер файла не должен превышать 5 МБ.');
                 this.photoInput.value = '';
+                if (this.photoPreview) this.photoPreview.innerHTML = '';
                 return;
             }
+
+            // Превью
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (this.photoPreview) {
+                    this.photoPreview.innerHTML = `<img src="${event.target.result}" alt="Предпросмотр">`;
+                }
+            };
+            reader.readAsDataURL(file);
         });
     }
 
@@ -217,6 +233,7 @@ export class ContactForm {
 
             alert('Форма успешно отправлена!');
             this.form.reset();
+            if (this.photoPreview) this.photoPreview.innerHTML = '';
         });
     }
 }

@@ -163,13 +163,38 @@ footer a:hover {
     gap: 0.75rem;
 }
 
-.task-checkbox {
+.task-checkbox,
+.modal-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
     width: 1.25rem;
     height: 1.25rem;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid #72808b;
+    background-color: #f0f8ff;
     cursor: pointer;
-    margin: 0;
-    accent-color: #6294d6;
+    position: relative;
     flex-shrink: 0;
+    margin: 0;
+    align-self: center;
+}
+
+.task-checkbox:checked,
+.modal-checkbox:checked {
+    background-color: #6294d6;
+    border-color: #6294d6;
+}
+
+.task-checkbox:checked::after,
+.modal-checkbox:checked::after {
+    content: "✓";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
 }
 
 .task-title {
@@ -321,7 +346,6 @@ footer a:hover {
     border-left-color: #da5959;
 }
 
-/* Модальное окно – чёрное затемнение */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -758,7 +782,6 @@ footer a:hover {
     border-color: #da5959;
 }
 
-/* Уведомления (тосты) */
 .toast-notification {
     position: fixed;
     bottom: 5rem;

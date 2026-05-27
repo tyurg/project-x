@@ -59,7 +59,7 @@ export class TasksModal {
                 </div>
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="modal-completed" ${isEdit && taskData.completed ? 'checked' : ''} autocomplete="off"> Выполнено
+                        <input type="checkbox" id="modal-completed" class="modal-checkbox" ${isEdit && taskData.completed ? 'checked' : ''} autocomplete="off"> Выполнено
                     </label>
                 </div>
                 <div class="modal-buttons">

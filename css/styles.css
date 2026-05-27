@@ -730,7 +730,16 @@ footer a:hover {
     border: 1px solid #ccc;
 }
 
-/* ========== АДАПТИВНОСТЬ ========== */
+/* Стили для ошибок в форме обратной связи */
+.field-error {
+    color: red;
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+    display: none;
+}
+.form-group input.error, .form-group select.error, .form-group textarea.error {
+    border-color: red;
+}
 
 /* Планшеты (768px – 1023px) */
 @media (max-width: 1023px) and (min-width: 768px) {
@@ -844,7 +853,7 @@ footer a:hover {
         font-weight: bold;
         color: rgb(68, 95, 107);
     }
-    
+
     #menu-toggle:checked ~ .nav-list {
         left: 0;
     }

@@ -16,9 +16,11 @@ export class ProfilePage extends BasePage {
         const container = document.querySelector('.container');
         if (!container) return;
 
+        // Индикация загрузки
+        container.innerHTML = '<div class="loading-spinner">Загрузка профиля...</div>';
+
         let user = UserService.getSavedUser();
         if (!user) {
-            container.innerHTML = '<div style="text-align: center;">Загрузка профиля...</div>';
             user = await UserService.fetchUser();
         }
 

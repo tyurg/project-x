@@ -307,12 +307,12 @@ export class TasksForm {
                 <h3>${isEdit ? 'Редактировать задачу' : 'Новая задача'}</h3>
                 <div class="form-group">
                     <label>Название *</label>
-                    <input type="text" id="modal-title" class="modal-input" placeholder="Введите название" value="${this.escapeHtml(isEdit ? taskData.title : '')}">
+                    <input type="text" id="modal-title" class="modal-input" placeholder="Введите название" value="${this.escapeHtml(isEdit ? taskData.title : '')}" maxlength="100">
                     <div class="error-message" data-for="title"></div>
                 </div>
                 <div class="form-group">
                     <label>Описание (необязательно)</label>
-                    <textarea id="modal-description" class="modal-input" rows="3" placeholder="Введите описание">${this.escapeHtml(isEdit ? taskData.description || '' : '')}</textarea>
+                    <textarea id="modal-description" class="modal-input" rows="3" placeholder="Введите описание" maxlength="500">${this.escapeHtml(isEdit ? taskData.description || '' : '')}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Приоритет</label>
@@ -352,6 +352,79 @@ export class TasksForm {
 
         const saveBtn = this.modal.querySelector('#modal-save');
         const cancelBtn = this.modal.querySelector('#modal-cancel');
+        const titleField = this.modal.querySelector('#modal-title');
+        const deadlineField = this.modal.querySelector('#modal-deadline');
+
+        // Функция валидации формы в реальном времени
+        const validateModal = () => {
+            const title = titleField?.value.trim() || '';
+            const deadlineValue = deadlineField?.value || '';
+            let isValid = true;
+
+            // Проверка названия
+            if (!title) isValid = false;
+
+            // Проверка дедлайна
+            if (deadlineValue) {
+                const deadlineDate = new Date(deadlineValue);
+                const now = new Date();
+                now.setSeconds(0, 0);
+                deadlineDate.setSeconds(0, 0);
+                if (deadlineDate < now) isValid = false;
+            }
+
+            if (saveBtn) saveBtn.disabled = !isValid;
+        };
+
+        // Добавляем слушатели для валидации в реальном времени
+        if (titleField) {
+            titleField.addEventListener('input', validateModal);
+            titleField.addEventListener('blur', () => {
+                const title = titleField.value.trim();
+                const errorDiv = this.modal.querySelector('.error-message[data-for="title"]');
+                if (!title) {
+                    errorDiv.textContent = 'Название обязательно';
+                    errorDiv.classList.add('visible');
+                    titleField.classList.add('error');
+                } else {
+                    errorDiv.textContent = '';
+                    errorDiv.classList.remove('visible');
+                    titleField.classList.remove('error');
+                }
+                validateModal();
+            });
+        }
+
+        if (deadlineField) {
+            deadlineField.addEventListener('change', () => {
+                const deadlineValue = deadlineField.value;
+                const errorDiv = this.modal.querySelector('.error-message[data-for="deadline"]');
+                if (deadlineValue) {
+                    const deadlineDate = new Date(deadlineValue);
+                    const now = new Date();
+                    now.setSeconds(0, 0);
+                    deadlineDate.setSeconds(0, 0);
+                    if (deadlineDate < now) {
+                        errorDiv.textContent = 'Дедлайн не может быть в прошлом';
+                        errorDiv.classList.add('visible');
+                        deadlineField.classList.add('error');
+                    } else {
+                        errorDiv.textContent = '';
+                        errorDiv.classList.remove('visible');
+                        deadlineField.classList.remove('error');
+                    }
+                } else {
+                    errorDiv.textContent = '';
+                    errorDiv.classList.remove('visible');
+                    deadlineField.classList.remove('error');
+                }
+                validateModal();
+            });
+        }
+
+        // Инициализация состояния кнопки
+        validateModal();
+
         saveBtn.addEventListener('click', () => this.saveTaskFromModal());
         cancelBtn.addEventListener('click', () => this.modal.remove());
         this.modal.addEventListener('click', (e) => {

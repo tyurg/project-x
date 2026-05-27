@@ -30,7 +30,6 @@ export class Header {
         const isGitHubPages = window.location.hostname.includes('github.io');
         const repoName = isGitHubPages ? `/${window.location.pathname.split('/')[1]}/` : '/';
 
-        // Изменено: logo.png → logo.svg
         const logoSrc = `${repoName}img/logo.svg`;
         const homeLink = `${repoName}tasks.html`;
 

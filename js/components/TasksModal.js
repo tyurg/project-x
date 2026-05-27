@@ -1,3 +1,5 @@
+import { TASK_CATEGORIES, TASK_PRIORITIES, VALIDATION_MESSAGES } from '../data/Constants.js';
+
 export class TasksModal {
     constructor(onSave) {
         this.modal = null;
@@ -9,6 +11,20 @@ export class TasksModal {
         if (this.modal) this.modal.remove();
         this.editingTaskIndex = taskData ? taskData.editingIndex : null;
         const isEdit = taskData !== null;
+
+        // Опции категорий
+        let categoriesOptions = '';
+        for (const [value, label] of Object.entries(TASK_CATEGORIES)) {
+            const selected = (isEdit && taskData.category === value) ? 'selected' : '';
+            categoriesOptions += `<option value="${value}" ${selected}>${label}</option>`;
+        }
+
+        // Опции приоритетов
+        let prioritiesOptions = '';
+        for (const [value, label] of Object.entries(TASK_PRIORITIES)) {
+            const selected = (isEdit && taskData.priority === value) ? 'selected' : '';
+            prioritiesOptions += `<option value="${value}" ${selected}>${label}</option>`;
+        }
 
         this.modal = document.createElement('div');
         this.modal.className = 'modal-overlay';
@@ -27,9 +43,7 @@ export class TasksModal {
                 <div class="form-group">
                     <label>Приоритет</label>
                     <select id="modal-priority" class="modal-select">
-                        <option value="low" ${isEdit && taskData.priority === 'low' ? 'selected' : ''}>Низкий</option>
-                        <option value="medium" ${isEdit && taskData.priority === 'medium' ? 'selected' : ''}>Средний</option>
-                        <option value="high" ${isEdit && taskData.priority === 'high' ? 'selected' : ''}>Высокий</option>
+                        ${prioritiesOptions}
                     </select>
                 </div>
                 <div class="form-group">
@@ -40,10 +54,7 @@ export class TasksModal {
                 <div class="form-group">
                     <label>Категория</label>
                     <select id="modal-category" class="modal-select">
-                        <option value="work" ${isEdit && taskData.category === 'work' ? 'selected' : ''}>Работа</option>
-                        <option value="study" ${isEdit && taskData.category === 'study' ? 'selected' : ''}>Учёба</option>
-                        <option value="home" ${isEdit && taskData.category === 'home' ? 'selected' : ''}>Дом</option>
-                        <option value="other" ${isEdit && taskData.category === 'other' ? 'selected' : ''}>Прочее</option>
+                        ${categoriesOptions}
                     </select>
                 </div>
                 <div class="form-group">
@@ -86,7 +97,7 @@ export class TasksModal {
                 const title = titleField.value.trim();
                 const errorDiv = this.modal.querySelector('.error-message[data-for="title"]');
                 if (!title) {
-                    errorDiv.textContent = 'Название обязательно';
+                    errorDiv.textContent = VALIDATION_MESSAGES.TITLE_REQUIRED;
                     errorDiv.classList.add('visible');
                     titleField.classList.add('error');
                 } else {
@@ -108,7 +119,7 @@ export class TasksModal {
                     now.setSeconds(0, 0);
                     deadlineDate.setSeconds(0, 0);
                     if (deadlineDate < now) {
-                        errorDiv.textContent = 'Дедлайн не может быть в прошлом';
+                        errorDiv.textContent = VALIDATION_MESSAGES.DEADLINE_PAST;
                         errorDiv.classList.add('visible');
                         deadlineField.classList.add('error');
                     } else {

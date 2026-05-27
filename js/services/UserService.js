@@ -1,6 +1,8 @@
+import { STORAGE_KEYS, API_BASE_URL } from '../data/Constants.js';
+
 export class UserService {
     static async fetchUser() {
-        const saved = localStorage.getItem('userProfile');
+        const saved = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
         if (saved) {
             return JSON.parse(saved);
         }
@@ -8,7 +10,7 @@ export class UserService {
     }
 
     static async refreshUser() {
-        localStorage.removeItem('tasks');
+        localStorage.removeItem(STORAGE_KEYS.TASKS);
         const newUser = await this.loadNewUser();
         window.dispatchEvent(new CustomEvent('userChanged', { detail: newUser }));
         return newUser;
@@ -16,7 +18,7 @@ export class UserService {
 
     static async loadNewUser() {
         try {
-            const response = await fetch('https://randomuser.me/api/');
+            const response = await fetch(API_BASE_URL);
             if (!response.ok) throw new Error('Ошибка загрузки профиля');
             const data = await response.json();
             const user = data.results[0];
@@ -27,7 +29,7 @@ export class UserService {
                 avatar: user.picture.large,
                 location: `${user.location.city}, ${user.location.country}`
             };
-            localStorage.setItem('userProfile', JSON.stringify(userData));
+            localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(userData));
             return userData;
         } catch (error) {
             const fallback = {
@@ -37,13 +39,13 @@ export class UserService {
                 avatar: 'https://via.placeholder.com/150',
                 location: 'Не указано'
             };
-            localStorage.setItem('userProfile', JSON.stringify(fallback));
+            localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(fallback));
             return fallback;
         }
     }
 
     static getSavedUser() {
-        const saved = localStorage.getItem('userProfile');
+        const saved = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
         return saved ? JSON.parse(saved) : null;
     }
 }

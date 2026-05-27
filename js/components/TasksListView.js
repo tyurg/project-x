@@ -1,3 +1,5 @@
+import { TASK_PRIORITIES, TASK_CATEGORIES } from '../data/Constants.js';
+
 export class TasksListView {
     constructor(container, onCheckboxChange, onEdit, onDelete) {
         this.container = container;
@@ -58,13 +60,11 @@ export class TasksListView {
         details.className = 'task-details';
 
         const priorityItem = this.createDetailItem('Приоритет:', 'span',
-            task.priority === 'low' ? 'Низкий' : task.priority === 'medium' ? 'Средний' : 'Высокий');
+            TASK_PRIORITIES[task.priority] || 'Неизвестно');
         const deadlineItem = this.createDetailItem('Дедлайн:', 'span',
             task.deadline ? new Date(task.deadline).toLocaleString() : 'не указан');
         const categoryItem = this.createDetailItem('Категория:', 'span',
-            task.category === 'work' ? 'Работа' : 
-            task.category === 'study' ? 'Учёба' : 
-            task.category === 'home' ? 'Дом' : 'Прочее');
+            TASK_CATEGORIES[task.category] || 'Прочее');
         if (task.description) {
             const descItem = this.createDetailItem('Описание:', 'span', task.description);
             details.appendChild(descItem);

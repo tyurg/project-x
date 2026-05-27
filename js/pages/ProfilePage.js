@@ -15,8 +15,7 @@ export class ProfilePage extends BasePage {
     async loadAndRenderProfile() {
         const container = document.querySelector('.container');
         if (!container) return;
-
-        // Индикация загрузки
+        
         container.innerHTML = '<div class="loading-spinner">Загрузка профиля...</div>';
 
         let user = UserService.getSavedUser();

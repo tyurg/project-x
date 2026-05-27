@@ -1,3 +1,5 @@
+import { VALIDATION_MESSAGES } from '../data/Constants.js';
+
 export class ContactForm {
     constructor(containerId) {
         this.containerId = containerId;
@@ -92,9 +94,9 @@ export class ContactForm {
     validateFIO(showErrors = true) {
         const val = this.fioInput.value.trim();
         let error = '';
-        if (!val) error = 'Введите ФИО';
-        else if (val.length < 3) error = 'Минимум 3 символа';
-        else if (!/^[а-яА-ЯёЁa-zA-Z\s\-']+$/.test(val)) error = 'Только буквы, пробелы, дефис, апостроф';
+        if (!val) error = VALIDATION_MESSAGES.FIO_REQUIRED;
+        else if (val.length < 3) error = VALIDATION_MESSAGES.FIO_MIN_LENGTH;
+        else if (!/^[а-яА-ЯёЁa-zA-Z\s\-']+$/.test(val)) error = VALIDATION_MESSAGES.FIO_INVALID_CHARS;
 
         this.errors.fio = error;
         if (showErrors) {
@@ -115,9 +117,9 @@ export class ContactForm {
         if (digits.length > 0) {
             if (digits[0] === '8') digits = '7' + digits.slice(1);
             if (digits[0] !== '7') digits = '7' + digits;
-            if (digits.length !== 11) error = 'Номер должен содержать ровно 11 цифр';
+            if (digits.length !== 11) error = VALIDATION_MESSAGES.PHONE_INVALID;
         } else {
-            error = 'Введите номер телефона';
+            error = VALIDATION_MESSAGES.PHONE_REQUIRED;
         }
 
         this.errors.phone = error;
@@ -136,11 +138,11 @@ export class ContactForm {
     validateDate() {
         const val = this.dateInput.value;
         let error = '';
-        if (!val) error = 'Выберите дату';
+        if (!val) error = VALIDATION_MESSAGES.DATE_REQUIRED;
         else {
             const selected = new Date(val);
             const current = new Date(this.today);
-            if (selected < current) error = 'Дата не может быть раньше сегодняшней';
+            if (selected < current) error = VALIDATION_MESSAGES.DATE_INVALID;
         }
         this.errors.date = error;
         this.errorDivs.date.textContent = error;
@@ -154,8 +156,8 @@ export class ContactForm {
         const file = this.photoInput.files[0];
         let error = '';
         if (file) {
-            if (!file.type.startsWith('image/')) error = 'Файл должен быть изображением';
-            else if (file.size > 5 * 1024 * 1024) error = 'Размер не более 5 МБ';
+            if (!file.type.startsWith('image/')) error = VALIDATION_MESSAGES.PHOTO_TYPE;
+            else if (file.size > 5 * 1024 * 1024) error = VALIDATION_MESSAGES.PHOTO_SIZE;
             else {
                 const reader = new FileReader();
                 reader.onload = (e) => {

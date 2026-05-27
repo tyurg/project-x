@@ -1,6 +1,7 @@
 import { TasksFilter } from './TasksFilter.js';
 import { TasksListView } from './TasksListView.js';
 import { TasksModal } from './TasksModal.js';
+import { STORAGE_KEYS } from '../data/Constants.js';
 
 export class TasksForm {
     constructor() {
@@ -222,11 +223,11 @@ export class TasksForm {
     }
 
     saveToLocalStorage() {
-        localStorage.setItem('tasks', JSON.stringify(this.tasks));
+        localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(this.tasks));
     }
 
     loadTasks() {
-        const saved = localStorage.getItem('tasks');
+        const saved = localStorage.getItem(STORAGE_KEYS.TASKS);
         if (saved) {
             this.tasks = JSON.parse(saved);
             this.tasks.forEach((task, idx) => {

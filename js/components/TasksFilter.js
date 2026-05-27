@@ -1,3 +1,5 @@
+import { TASK_CATEGORIES } from '../data/Constants.js';
+
 export class TasksFilter {
     constructor(tasks = []) {
         this.tasks = tasks;
@@ -13,9 +15,7 @@ export class TasksFilter {
         if (searchText && searchText.trim()) {
             const lowerSearch = searchText.toLowerCase();
             result = result.filter(task => {
-                const categoryText = task.category === 'work' ? 'работа' :
-                                     task.category === 'study' ? 'учёба' :
-                                     task.category === 'home' ? 'дом' : 'прочее';
+                const categoryText = (TASK_CATEGORIES[task.category] || "Прочее").toLowerCase();
                 return (task.title && task.title.toLowerCase().includes(lowerSearch)) ||
                        (task.description && task.description.toLowerCase().includes(lowerSearch)) ||
                        categoryText.includes(lowerSearch);

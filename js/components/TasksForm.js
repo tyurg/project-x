@@ -7,13 +7,16 @@ export class TasksForm {
         this.listContainer = null;
         this.modal = null;
         this.filter = null;
-        this.editingTaskIndex = null;   // индекс в this.tasks для редактирования
+        this.editingTaskIndex = null;
 
-        // Элементы фильтров
         this.searchInput = null;
         this.priorityFilter = null;
         this.statusFilter = null;
         this.sortSelect = null;
+
+        window.addEventListener('userChanged', () => {
+            this.handleUserChange();
+        });
 
         this.init();
     }
@@ -24,6 +27,12 @@ export class TasksForm {
         } else {
             this.render();
         }
+    }
+
+    handleUserChange() {
+        this.tasks = [];
+        this.saveToLocalStorage();
+        this.applyFiltersAndSort();
     }
 
     render() {
@@ -59,7 +68,6 @@ export class TasksForm {
         const panel = document.createElement('div');
         panel.className = 'filter-panel';
 
-        // Поиск
         const searchGroup = document.createElement('div');
         searchGroup.className = 'filter-group';
         const searchLabel = document.createElement('label');
@@ -73,7 +81,6 @@ export class TasksForm {
         searchGroup.appendChild(this.searchInput);
         panel.appendChild(searchGroup);
 
-        // Фильтр по приоритету
         const priorityGroup = document.createElement('div');
         priorityGroup.className = 'filter-group';
         const priorityLabel = document.createElement('label');
@@ -91,7 +98,6 @@ export class TasksForm {
         priorityGroup.appendChild(this.priorityFilter);
         panel.appendChild(priorityGroup);
 
-        // Фильтр по статусу
         const statusGroup = document.createElement('div');
         statusGroup.className = 'filter-group';
         const statusLabel = document.createElement('label');
@@ -108,7 +114,6 @@ export class TasksForm {
         statusGroup.appendChild(this.statusFilter);
         panel.appendChild(statusGroup);
 
-        // Сортировка
         const sortGroup = document.createElement('div');
         sortGroup.className = 'filter-group';
         const sortLabel = document.createElement('label');
@@ -202,11 +207,11 @@ export class TasksForm {
         const details = document.createElement('div');
         details.className = 'task-details';
 
-        const priorityItem = this.createDetailItem('Приоритет:', 'span', 
+        const priorityItem = this.createDetailItem('Приоритет:', 'span',
             task.priority === 'low' ? 'Низкий' : task.priority === 'medium' ? 'Средний' : 'Высокий');
-        const deadlineItem = this.createDetailItem('Дедлайн:', 'span', 
+        const deadlineItem = this.createDetailItem('Дедлайн:', 'span',
             task.deadline ? new Date(task.deadline).toLocaleString() : 'не указан');
-        const categoryItem = this.createDetailItem('Категория:', 'span', 
+        const categoryItem = this.createDetailItem('Категория:', 'span',
             task.category === 'work' ? 'Работа' : task.category === 'study' ? 'Учёба' : 'Дом');
         if (task.description) {
             const descItem = this.createDetailItem('Описание:', 'span', task.description);
@@ -257,7 +262,6 @@ export class TasksForm {
         });
     }
 
-    // ---------- Модальное окно (универсальное) ----------
     openAddModal() {
         this.editingTaskIndex = null;
         this.showModal(null);
@@ -340,8 +344,6 @@ export class TasksForm {
             if (m === '<') return '&lt;';
             if (m === '>') return '&gt;';
             return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
         });
     }
 
@@ -402,11 +404,9 @@ export class TasksForm {
         };
 
         if (this.editingTaskIndex !== null) {
-            // Редактирование: сохраняем createdAt оригинальный
             taskData.createdAt = this.tasks[this.editingTaskIndex].createdAt;
             this.tasks[this.editingTaskIndex] = taskData;
         } else {
-            // Новая задача
             taskData.createdAt = Date.now();
             this.tasks.push(taskData);
         }

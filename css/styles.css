@@ -7,7 +7,7 @@
 }
 
 * {
-    font-family: 'BookmanOldStyle';
+    font-family: 'Courier New', Courier, monospace;
 }
 
 body {
@@ -57,7 +57,7 @@ nav a {
     color: rgb(39, 60, 70);
     text-decoration: none;
     font-weight: 500;
-    font-size: 1.0.875rem;
+    font-size: 1.2rem;
     padding: 0.5rem 0.875rem;
 }
 
@@ -100,12 +100,12 @@ footer a:hover {
     padding: 1.25rem;
 }
 
-#wrapper { 
+#wrapper {
     margin: auto;
     width: 50%;
     min-width: 18.75rem;
     border: 0.0625rem solid grey;
-    padding: 1.5em;
+    padding: 1.5rem;
     border-radius: 0.5rem;
     background-color: rgba(255, 255, 255, 0.3);
     box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
@@ -137,7 +137,7 @@ footer a:hover {
 
 .task-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
 }
 
@@ -153,14 +153,18 @@ footer a:hover {
 .task-title {
     background-color: aliceblue;
     border-radius: 0.5rem;
-    height: 2rem;
     color: rgb(39, 60, 70);
     border: 0.0625rem solid rgb(114, 128, 139);
-    padding: 0 0.75rem;
+    padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
     width: 100%;
     box-sizing: border-box;
     flex: 1;
+    min-width: 0;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
 }
 
 .task-title:focus {
@@ -212,27 +216,30 @@ footer a:hover {
 .task-details {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.detail-item {
+    display: flex;
     align-items: center;
-    margin-top: 0.25rem;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.4);
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
 }
 
-.task-priority,
-.task-category,
-.task-deadline {
-    background-color: aliceblue;
-    border-radius: 0.5rem;
-    padding: 0.4rem 0.6rem;
-    border: 0.0625rem solid rgb(114, 128, 139);
+.detail-label {
+    font-size: 0.85rem;
+    font-weight: 500;
     color: rgb(39, 60, 70);
-    font-size: 0.9rem;
-    cursor: pointer;
+    white-space: nowrap;
 }
 
-.task-deadline {
-    font-family: inherit;
+.detail-value {
+    font-size: 0.85rem;
+    color: rgb(39, 60, 70);
 }
-
 
 .out-task.completed {
     background-color: rgba(98, 148, 214, 0.2);
@@ -271,7 +278,6 @@ footer a:hover {
     transform: scale(1.02);
 }
 
-
 .tasks-counter {
     text-align: center;
     margin-top: 1.5rem;
@@ -279,43 +285,6 @@ footer a:hover {
     color: rgb(39, 60, 70);
     font-size: 0.9rem;
     border-top: 0.0625rem solid rgb(182, 197, 211);
-}
-
-#template {
-    display: none;
-}
-
-.task-details {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.875rem;
-    margin-top: 0.5rem;
-}
-
-.detail-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.4);
-    padding: 0.25rem 0.75rem;
-    border-radius: 2rem;
-}
-
-.detail-label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: rgb(39, 60, 70);
-    white-space: nowrap;
-}
-
-.task-priority,
-.task-category,
-.task-deadline {
-    background-color: aliceblue;
-    border-radius: 0.5rem;
-    padding: 0.3rem 0.5rem;
-    border: 0.0625rem solid rgb(114, 128, 139);
-    font-size: 0.85rem;
 }
 
 .out-task.deadline-safe {
@@ -337,7 +306,6 @@ footer a:hover {
     transition: border-left-color 0.2s;
 }
 
-/* Модальное окно */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -357,7 +325,7 @@ footer a:hover {
     border-radius: 1rem;
     width: 90%;
     max-width: 500px;
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.3);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
 }
 
 .modal-content h3 {
@@ -375,10 +343,11 @@ footer a:hover {
     font-weight: bold;
 }
 
-.modal-input, .modal-select {
+.modal-input,
+.modal-select {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 0.0625rem solid #ccc;
     border-radius: 0.5rem;
     box-sizing: border-box;
 }
@@ -394,7 +363,8 @@ footer a:hover {
     display: block;
 }
 
-.modal-input.error, .modal-select.error {
+.modal-input.error,
+.modal-select.error {
     border-color: red;
     background-color: #fff3f3;
 }
@@ -422,17 +392,11 @@ footer a:hover {
     background: #ccc;
 }
 
-.detail-value {
-    font-size: 0.85rem;
-    color: rgb(39, 60, 70);
-}
-
-/* Панель фильтров и сортировки – улучшенные отступы */
 .filter-panel {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.5rem;           /* больше расстояние между группами */
-    margin-bottom: 2rem;   /* отступ от списка задач */
+    gap: 1.5rem;
+    margin-bottom: 2rem;
     padding: 0.5rem 1.5rem;
     background: rgba(255, 255, 255, 0.6);
     border-radius: 1rem;
@@ -456,9 +420,10 @@ footer a:hover {
     color: rgb(39, 60, 70);
 }
 
-.filter-input, .filter-select {
+.filter-input,
+.filter-select {
     padding: 0.5rem 0.8rem;
-    border: 1px solid #c0c0c0;
+    border: 0.0625rem solid #c0c0c0;
     border-radius: 1.5rem;
     background: white;
     width: 100%;
@@ -466,7 +431,8 @@ footer a:hover {
     transition: all 0.2s;
 }
 
-.filter-input:focus, .filter-select:focus {
+.filter-input:focus,
+.filter-select:focus {
     outline: none;
     border-color: rgb(98, 148, 214);
     box-shadow: 0 0 0 0.2rem rgba(98, 148, 214, 0.2);
@@ -491,4 +457,76 @@ footer a:hover {
 .edit-task-button:hover {
     background: rgb(80, 120, 170);
     transform: scale(1.05);
+}
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+}
+
+.profile-card {
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 0.1875rem solid rgb(98, 148, 214);
+    margin-bottom: 1rem;
+}
+
+.user-info-header {
+    position: absolute;
+    right: 1rem;
+    top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: aliceblue;
+    padding: 0.3rem 0.8rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.header-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.header-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: rgb(39, 60, 70);
+}
+
+.change-user-btn {
+    background: rgb(98, 148, 214);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.change-user-btn:hover {
+    background: rgb(78, 128, 194);
+}
+
+.change-user-btn:disabled {
+    background: #aaa;
+    cursor: not-allowed;
 }

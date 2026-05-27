@@ -10,7 +10,6 @@ export class TasksFilter {
     filterAndSort({ searchText, priority, status, sortType }) {
         let result = [...this.tasks];
 
-        // Текстовый поиск (название, описание, категория)
         if (searchText && searchText.trim()) {
             const lowerSearch = searchText.toLowerCase();
             result = result.filter(task => {
@@ -22,19 +21,16 @@ export class TasksFilter {
             });
         }
 
-        // Фильтр по приоритету
         if (priority && priority !== 'all') {
             result = result.filter(task => task.priority === priority);
         }
 
-        // Фильтр по статусу
         if (status === 'active') {
             result = result.filter(task => !task.completed);
         } else if (status === 'completed') {
             result = result.filter(task => task.completed);
         }
 
-        // Сортировка
         switch (sortType) {
             case 'deadline_asc':
                 result.sort((a, b) => {

@@ -22,7 +22,7 @@ export class ContactForm {
         this.container.innerHTML = `
             <div class="contact-section">
                 <h2>Свяжитесь со мной</h2>
-                <p class="contact-description">Если появились вопросы по работе сайта (возможные ошибки) - оставьте свои данные и я свяжусь с вами</p>
+                <p class="contact-description">Если появились вопросы по работе сайта (возможные ошибки) - оставьте свои данные, и я свяжусь с вами</p>
                 <form class="contact-form" id="contact-form">
                     <div class="form-group">
                         <label for="fio">ФИО (только буквы)</label>

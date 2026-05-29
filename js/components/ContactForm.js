@@ -27,8 +27,8 @@ export class ContactForm {
                 <p class="contact-description">Если появились вопросы по работе сайта (возможные ошибки) - оставьте свои данные, и я свяжусь с вами</p>
                 <form class="contact-form" id="contact-form">
                     <div class="form-group">
-                        <label for="fio">ФИО (только буквы)</label>
-                        <input type="text" id="fio" name="fio" placeholder="Иванов Иван Иванович" maxlength="50" autocomplete="name" required>
+                        <label for="fio">ФИО</label>
+                        <input type="text" id="fio" name="fio" placeholder="Иванов Иван Иванович" autocomplete="name" required>
                         <div class="field-error" id="fio-error"></div>
                     </div>
                     <div class="form-group">
@@ -38,7 +38,7 @@ export class ContactForm {
                     </div>
                     <div class="form-group">
                         <label for="phone">Номер телефона</label>
-                        <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" autocomplete="tel" required>
+                        <input type="tel" id="phone" name="phone" placeholder="8 900 000 00 00" autocomplete="tel" required>
                         <div class="field-error" id="phone-error"></div>
                     </div>
                     <div class="form-group">
@@ -78,11 +78,49 @@ export class ContactForm {
     }
 
     initValidation() {
+        // Валидация ФИО
+        this.fioInput.addEventListener('beforeinput', (e) => {
+            if (e.data && /\d/.test(e.data)) {
+                e.preventDefault();
+            }
+        });
         this.fioInput.addEventListener('blur', () => this.validateFIO(true));
         this.fioInput.addEventListener('input', () => this.validateFIO(false));
 
-        this.phoneInput.addEventListener('blur', () => this.validatePhone(true));
-        this.phoneInput.addEventListener('input', () => this.validatePhone(false));
+        // Валидация телефона: только цифры, не более 11, форматирование
+        this.phoneInput.addEventListener('beforeinput', (e) => {
+            if (e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward') return;
+            if (e.data && !/^\d$/.test(e.data)) {
+                e.preventDefault();
+                return;
+            }
+            const currentDigits = this.getRawDigits();
+            if (currentDigits.length >= 11 && e.data) {
+                e.preventDefault();
+            }
+        });
+
+        this.phoneInput.addEventListener('input', () => {
+            let raw = this.getRawDigits();
+            if (raw.length > 11) raw = raw.slice(0, 11);
+            const formatted = this.formatPhoneNumber(raw);
+            const cursorPos = this.phoneInput.selectionStart;
+            const oldLength = this.phoneInput.value.length;
+            this.phoneInput.value = formatted;
+            const newLength = formatted.length;
+            const delta = newLength - oldLength;
+            const newCursor = Math.min(cursorPos + delta, newLength);
+            this.phoneInput.setSelectionRange(newCursor, newCursor);
+            this.validatePhone(true);
+        });
+
+        this.phoneInput.addEventListener('blur', () => {
+            let raw = this.getRawDigits();
+            if (raw.length > 11) raw = raw.slice(0, 11);
+            const formatted = this.formatPhoneNumber(raw);
+            this.phoneInput.value = formatted;
+            this.validatePhone(true);
+        });
 
         this.dateInput.addEventListener('change', () => this.validateDate());
         this.photoInput.addEventListener('change', () => this.validatePhoto());
@@ -91,12 +129,37 @@ export class ContactForm {
         this.handleSubmit();
     }
 
+    getRawDigits() {
+        return this.phoneInput.value.replace(/\D/g, '');
+    }
+
+    formatPhoneNumber(digits) {
+        if (!digits) return '';
+        const parts = [];
+        if (digits.length >= 1) parts.push(digits.slice(0, 1));
+        if (digits.length >= 4) parts.push(digits.slice(1, 4));
+        else if (digits.length > 1) parts.push(digits.slice(1));
+        if (digits.length >= 7) parts.push(digits.slice(4, 7));
+        else if (digits.length > 4 && digits.length < 7) parts.push(digits.slice(4));
+        if (digits.length >= 9) parts.push(digits.slice(7, 9));
+        else if (digits.length > 7 && digits.length < 9) parts.push(digits.slice(7));
+        if (digits.length >= 11) parts.push(digits.slice(9, 11));
+        else if (digits.length > 9 && digits.length < 11) parts.push(digits.slice(9));
+        return parts.join(' ');
+    }
+
     validateFIO(showErrors = true) {
         const val = this.fioInput.value.trim();
         let error = '';
-        if (!val) error = VALIDATION_MESSAGES.FIO_REQUIRED;
-        else if (val.length < 3) error = VALIDATION_MESSAGES.FIO_MIN_LENGTH;
-        else if (!/^[а-яА-ЯёЁa-zA-Z\s\-']+$/.test(val)) error = VALIDATION_MESSAGES.FIO_INVALID_CHARS;
+        if (!val) {
+            error = VALIDATION_MESSAGES.FIO_REQUIRED;
+        } else {
+            // Регулярка: 2-3 слова из русских букв, каждое от 2 до 20 символов, разделены пробелом
+            const fioRegex = /^[а-яё]{2,20}(?: [а-яё]{2,20}){1,2}$/i;
+            if (!fioRegex.test(val)) {
+                error = VALIDATION_MESSAGES.FIO_INVALID_CHARS;
+            }
+        }
 
         this.errors.fio = error;
         if (showErrors) {
@@ -112,21 +175,21 @@ export class ContactForm {
     }
 
     validatePhone(showErrors = true) {
-        let digits = this.phoneInput.value.replace(/\D/g, '');
+        const digits = this.getRawDigits();
         let error = '';
-        if (digits.length > 0) {
-            if (digits[0] === '8') digits = '7' + digits.slice(1);
-            if (digits[0] !== '7') digits = '7' + digits;
-            if (digits.length !== 11) error = VALIDATION_MESSAGES.PHONE_INVALID;
-        } else {
+        if (digits.length === 0) {
             error = VALIDATION_MESSAGES.PHONE_REQUIRED;
+        } else if (digits.length !== 11) {
+            error = VALIDATION_MESSAGES.PHONE_INVALID;
+        } else if (digits[0] !== '8') {
+            error = VALIDATION_MESSAGES.PHONE_START_ERROR;
         }
 
         this.errors.phone = error;
         if (showErrors) {
             this.errorDivs.phone.textContent = error;
             this.errorDivs.phone.style.display = error ? 'block' : 'none';
-            this.phoneInput.style.borderColor = error ? 'red' : (digits.length === 11 ? 'green' : '#aaa');
+            this.phoneInput.style.borderColor = error ? 'red' : 'green';
         } else {
             this.errorDivs.phone.style.display = 'none';
             this.phoneInput.style.borderColor = '#aaa';

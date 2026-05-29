@@ -66,7 +66,7 @@ export class TasksForm {
 
         const deleteCompletedBtn = document.createElement('button');
         deleteCompletedBtn.className = 'delete-completed-button';
-        deleteCompletedBtn.textContent = 'Удалить выполненные задачи';
+        deleteCompletedBtn.textContent = 'Удалить завершённые задачи';
         deleteCompletedBtn.addEventListener('click', () => this.deleteCompletedTasks());
 
         container.appendChild(addBtn);
@@ -182,10 +182,10 @@ export class TasksForm {
     deleteCompletedTasks() {
         const completedTasks = this.tasks.filter(task => task.completed);
         if (completedTasks.length === 0) {
-            alert('Нет выполненных задач для удаления');
+            alert('Нет завершённых задач для удаления');
             return;
         }
-        if (confirm(`Вы уверены, что хотите удалить ${completedTasks.length} выполненных задач?`)) {
+        if (confirm(`Вы уверены, что хотите удалить ${completedTasks.length} завершённых задач?`)) {
             this.tasks = this.tasks.filter(task => !task.completed);
             this.saveToLocalStorage();
             this.applyFiltersAndSort();

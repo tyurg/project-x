@@ -1,4 +1,5 @@
 import { TASK_CATEGORIES, TASK_PRIORITIES, VALIDATION_MESSAGES } from '../data/Constants.js';
+import { ModalDialog } from './ModalDialog.js';
 
 export class TasksModal {
     constructor(onSave) {
@@ -12,20 +13,17 @@ export class TasksModal {
         this.editingTaskIndex = taskData ? taskData.editingIndex : null;
         const isEdit = taskData !== null;
 
-
         let categoriesOptions = '';
         for (const [value, label] of Object.entries(TASK_CATEGORIES)) {
             const selected = (isEdit && taskData.category === value) ? 'selected' : '';
             categoriesOptions += `<option value="${value}" ${selected}>${label}</option>`;
         }
 
-
         let prioritiesOptions = '';
         for (const [value, label] of Object.entries(TASK_PRIORITIES)) {
             const selected = (isEdit && taskData.priority === value) ? 'selected' : '';
             prioritiesOptions += `<option value="${value}" ${selected}>${label}</option>`;
         }
-
 
         const now = new Date();
         const year = now.getFullYear();
@@ -42,33 +40,33 @@ export class TasksModal {
                 <h3>${isEdit ? 'Редактировать задачу' : 'Новая задача'}</h3>
                 <div class="form-group">
                     <label>Название *</label>
-                    <input type="text" id="modal-title" class="modal-input" placeholder="Введите название" value="${this.escapeHtml(isEdit ? taskData.title : '')}" maxlength="100" autocomplete="off">
+                    <input type="text" id="modal-title" name="title" class="modal-input" placeholder="Введите название" value="${this.escapeHtml(isEdit ? taskData.title : '')}" maxlength="100" autocomplete="off">
                     <div class="error-message" data-for="title"></div>
                 </div>
                 <div class="form-group">
                     <label>Описание (необязательно)</label>
-                    <textarea id="modal-description" class="modal-input" rows="3" placeholder="Введите описание" maxlength="500" autocomplete="off">${this.escapeHtml(isEdit ? taskData.description || '' : '')}</textarea>
+                    <textarea id="modal-description" name="description" class="modal-input" rows="3" placeholder="Введите описание" maxlength="500" autocomplete="off">${this.escapeHtml(isEdit ? taskData.description || '' : '')}</textarea>
                 </div>
                 <div class="form-group">
                     <label>Приоритет</label>
-                    <select id="modal-priority" class="modal-select" autocomplete="off">
+                    <select id="modal-priority" name="priority" class="modal-select" autocomplete="off">
                         ${prioritiesOptions}
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Дедлайн</label>
-                    <input type="datetime-local" id="modal-deadline" class="modal-input" value="${isEdit && taskData.deadline ? taskData.deadline : ''}" ${deadlineMinAttr} autocomplete="off">
+                    <input type="datetime-local" id="modal-deadline" name="deadline" class="modal-input" value="${isEdit && taskData.deadline ? taskData.deadline : ''}" ${deadlineMinAttr} autocomplete="off">
                     <div class="error-message" data-for="deadline"></div>
                 </div>
                 <div class="form-group">
                     <label>Категория</label>
-                    <select id="modal-category" class="modal-select" autocomplete="off">
+                    <select id="modal-category" name="category" class="modal-select" autocomplete="off">
                         ${categoriesOptions}
                     </select>
                 </div>
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="modal-completed" class="modal-checkbox" ${isEdit && taskData.completed ? 'checked' : ''} autocomplete="off"> Выполнено
+                        <input type="checkbox" id="modal-completed" name="completed" class="modal-checkbox" ${isEdit && taskData.completed ? 'checked' : ''} autocomplete="off"> Выполнено
                     </label>
                 </div>
                 <div class="modal-buttons">
@@ -147,7 +145,7 @@ export class TasksModal {
 
         validateModal();
 
-        saveBtn.addEventListener('click', () => {
+        saveBtn.addEventListener('click', async () => {
             const title = titleField?.value.trim();
             const description = this.modal.querySelector('#modal-description')?.value.trim() || '';
             const priority = this.modal.querySelector('#modal-priority')?.value;
@@ -176,7 +174,7 @@ export class TasksModal {
                 });
                 this.modal.remove();
             } else {
-                alert('Исправьте ошибки в форме');
+                await ModalDialog.showInfo('Исправьте ошибки в форме', 'Ошибка валидации');
             }
         });
 

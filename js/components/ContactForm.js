@@ -1,4 +1,5 @@
 import { VALIDATION_MESSAGES } from '../data/Constants.js';
+import { ModalDialog } from './ModalDialog.js';
 
 export class ContactForm {
     constructor(containerId) {
@@ -43,7 +44,7 @@ export class ContactForm {
                     </div>
                     <div class="form-group">
                         <label for="photo-upload">Загрузить фотографию</label>
-                        <input type="file" id="photo-upload" name="photo-upload" accept="image/*" autocomplete="off">
+                        <input type="file" id="photo-upload" name="photo" accept="image/*" autocomplete="off">
                         <div id="photo-preview" class="photo-preview"></div>
                         <div class="field-error" id="photo-error"></div>
                     </div>
@@ -216,9 +217,15 @@ export class ContactForm {
         const file = this.photoInput.files[0];
         let error = '';
         if (file) {
-            if (!file.type.startsWith('image/')) error = VALIDATION_MESSAGES.PHOTO_TYPE;
-            else if (file.size > 5 * 1024 * 1024) error = VALIDATION_MESSAGES.PHOTO_SIZE;
-            else {
+            if (!file.type.startsWith('image/')) {
+                error = VALIDATION_MESSAGES.PHOTO_TYPE;
+                ModalDialog.showInfo(VALIDATION_MESSAGES.PHOTO_TYPE, 'Ошибка');
+                this.photoInput.value = '';
+            } else if (file.size > 5 * 1024 * 1024) {
+                error = VALIDATION_MESSAGES.PHOTO_SIZE;
+                ModalDialog.showInfo(VALIDATION_MESSAGES.PHOTO_SIZE, 'Ошибка');
+                this.photoInput.value = '';
+            } else {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     this.photoPreview.innerHTML = `<img src="${e.target.result}" alt="Предпросмотр">`;
@@ -243,23 +250,8 @@ export class ContactForm {
         this.submitBtn.style.cursor = hasErrors ? 'not-allowed' : 'pointer';
     }
 
-    showNotification(message, type = 'success') {
-        const existingToast = document.querySelector('.toast-notification');
-        if (existingToast) existingToast.remove();
-
-        const toast = document.createElement('div');
-        toast.className = `toast-notification ${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.classList.add('fade-out');
-            setTimeout(() => toast.remove(), 500);
-        }, 3000);
-    }
-
     handleSubmit() {
-        this.form.addEventListener('submit', (e) => {
+        this.form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const isFioValid = this.validateFIO(true);
@@ -268,7 +260,7 @@ export class ContactForm {
             const isPhotoValid = this.validatePhoto();
 
             if (isFioValid && isPhoneValid && isDateValid && isPhotoValid) {
-                this.showNotification('Форма успешно отправлена!', 'success');
+                await ModalDialog.showInfo('Форма успешно отправлена!', 'Успех');
                 this.form.reset();
                 this.photoPreview.innerHTML = '';
                 for (let key in this.errorDivs) {
@@ -277,7 +269,7 @@ export class ContactForm {
                 }
                 this.updateSubmitButton();
             } else {
-                this.showNotification('Исправьте ошибки в форме', 'error');
+                await ModalDialog.showInfo('Исправьте ошибки в форме', 'Ошибка');
             }
         });
     }

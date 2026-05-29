@@ -17,10 +17,9 @@ export class UserService {
             return newUser;
         } catch (error) {
             console.error('Ошибка при обновлении пользователя:', error);
-            alert('Не удалось загрузить профиль с сервера. Проверьте интернет-соединение. Используем гостевой профиль.');
             const fallbackUser = this.getFallbackUser();
             window.dispatchEvent(new CustomEvent('userChanged', { detail: fallbackUser }));
-            return fallbackUser;
+            throw error;
         }
     }
 

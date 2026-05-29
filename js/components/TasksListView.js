@@ -27,6 +27,7 @@ export class TasksListView {
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.className = 'task-checkbox';
+        checkbox.name = `task-completed-${task.createdAt || displayIndex}`;
         checkbox.checked = task.completed;
         checkbox.addEventListener('change', () => {
             if (this.onCheckboxChange) this.onCheckboxChange(task, checkbox.checked);
@@ -82,13 +83,13 @@ export class TasksListView {
     createDetailItem(labelText, tag, value) {
         const div = document.createElement('div');
         div.className = 'detail-item';
-        const label = document.createElement('label');
-        label.className = 'detail-label';
-        label.textContent = labelText;
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'detail-label';
+        labelSpan.textContent = labelText;
         const valSpan = document.createElement(tag);
         valSpan.className = 'detail-value';
         valSpan.textContent = value;
-        div.appendChild(label);
+        div.appendChild(labelSpan);
         div.appendChild(valSpan);
         return div;
     }

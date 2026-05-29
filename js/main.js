@@ -4,6 +4,7 @@ import { TasksPage } from './pages/TasksPage.js';
 import { ProfilePage } from './pages/ProfilePage.js';
 import { HelpPage } from './pages/HelpPage.js';
 import { UserService } from './services/UserService.js';
+import { ModalDialog } from './components/ModalDialog.js';
 
 function showLoadingIndicator() {
     const headerContainer = document.getElementById('header-container');
@@ -16,29 +17,21 @@ function showLoadingIndicator() {
     }
 }
 
-function showErrorMessage(message) {
-    alert(message);
-}
-
 async function preloadUserProfile() {
     if (UserService.getSavedUser()) return;
-
     showLoadingIndicator();
-
     try {
         await UserService.loadNewUser();
     } catch (error) {
         console.error('Ошибка при загрузке профиля из API:', error);
-        showErrorMessage('Не удалось загрузить профиль с сервера. Используем локальные данные.');
+        await ModalDialog.showInfo('Не удалось загрузить профиль с сервера. Используем локальные данные.', 'Ошибка');
         UserService.getFallbackUser();
     }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
     await preloadUserProfile();
-
     const currentPage = window.location.pathname.split('/').pop();
-
     switch (currentPage) {
         case 'profile.html':
             new ProfilePage().init();

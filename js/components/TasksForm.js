@@ -2,6 +2,7 @@ import { TasksFilter } from './TasksFilter.js';
 import { TasksListView } from './TasksListView.js';
 import { TasksModal } from './TasksModal.js';
 import { STORAGE_KEYS } from '../data/Constants.js';
+import { ModalDialog } from './ModalDialog.js';
 
 export class TasksForm {
     constructor() {
@@ -10,12 +11,10 @@ export class TasksForm {
         this.filter = null;
         this.listView = null;
         this.modal = null;
-
         this.searchInput = null;
         this.priorityFilter = null;
         this.statusFilter = null;
         this.sortSelect = null;
-
         window.addEventListener('userChanged', () => this.handleUserChange());
         this.init();
     }
@@ -38,41 +37,33 @@ export class TasksForm {
         const wrapper = document.getElementById('wrapper');
         if (!wrapper) return;
         wrapper.innerHTML = '';
-
         const container = document.createElement('div');
         container.className = 'tasks-container';
         const title = document.createElement('h3');
         title.textContent = 'Задачи';
         container.appendChild(title);
-
         const filterPanel = this.createFilterPanel();
         container.appendChild(filterPanel);
-
         const listContainer = document.createElement('div');
         listContainer.className = 'tasks-list';
         container.appendChild(listContainer);
-
         this.listView = new TasksListView(
             listContainer,
             (task, completed) => this.onTaskCheckboxChange(task, completed),
             (task) => this.openEditModal(task),
             (task) => this.onTaskDelete(task)
         );
-
         const addBtn = document.createElement('button');
         addBtn.className = 'add-task-button';
         addBtn.textContent = '+ Добавить задачу';
         addBtn.addEventListener('click', () => this.openAddModal());
-
         const deleteCompletedBtn = document.createElement('button');
         deleteCompletedBtn.className = 'delete-completed-button';
         deleteCompletedBtn.textContent = 'Удалить завершённые задачи';
         deleteCompletedBtn.addEventListener('click', () => this.deleteCompletedTasks());
-
         container.appendChild(addBtn);
         container.appendChild(deleteCompletedBtn);
         wrapper.appendChild(container);
-
         this.loadTasks();
     }
 
@@ -80,12 +71,15 @@ export class TasksForm {
         const panel = document.createElement('div');
         panel.className = 'filter-panel';
 
+        // Поиск
         const searchGroup = document.createElement('div');
         searchGroup.className = 'filter-group';
         const searchLabel = document.createElement('label');
         searchLabel.textContent = 'Поиск:';
+        searchLabel.setAttribute('for', 'filter-search');
         this.searchInput = document.createElement('input');
         this.searchInput.type = 'text';
+        this.searchInput.id = 'filter-search';
         this.searchInput.placeholder = 'Название, описание, категория...';
         this.searchInput.className = 'filter-input';
         this.searchInput.addEventListener('input', () => this.applyFiltersAndSort());
@@ -93,11 +87,14 @@ export class TasksForm {
         searchGroup.appendChild(this.searchInput);
         panel.appendChild(searchGroup);
 
+        // Приоритет
         const priorityGroup = document.createElement('div');
         priorityGroup.className = 'filter-group';
         const priorityLabel = document.createElement('label');
         priorityLabel.textContent = 'Приоритет:';
+        priorityLabel.setAttribute('for', 'filter-priority');
         this.priorityFilter = document.createElement('select');
+        this.priorityFilter.id = 'filter-priority';
         this.priorityFilter.className = 'filter-select';
         this.priorityFilter.innerHTML = `
             <option value="all">Все</option>
@@ -110,11 +107,14 @@ export class TasksForm {
         priorityGroup.appendChild(this.priorityFilter);
         panel.appendChild(priorityGroup);
 
+        // Статус
         const statusGroup = document.createElement('div');
         statusGroup.className = 'filter-group';
         const statusLabel = document.createElement('label');
         statusLabel.textContent = 'Статус:';
+        statusLabel.setAttribute('for', 'filter-status');
         this.statusFilter = document.createElement('select');
+        this.statusFilter.id = 'filter-status';
         this.statusFilter.className = 'filter-select';
         this.statusFilter.innerHTML = `
             <option value="all">Все</option>
@@ -126,11 +126,14 @@ export class TasksForm {
         statusGroup.appendChild(this.statusFilter);
         panel.appendChild(statusGroup);
 
+        // Сортировка
         const sortGroup = document.createElement('div');
         sortGroup.className = 'filter-group';
         const sortLabel = document.createElement('label');
         sortLabel.textContent = 'Сортировать:';
+        sortLabel.setAttribute('for', 'filter-sort');
         this.sortSelect = document.createElement('select');
+        this.sortSelect.id = 'filter-sort';
         this.sortSelect.className = 'filter-select';
         this.sortSelect.innerHTML = `
             <option value="deadline_asc">По дедлайну (сначала ближайшие)</option>
@@ -143,19 +146,17 @@ export class TasksForm {
         panel.appendChild(sortGroup);
 
         return panel;
-    }
-
+    }  
+     
     applyFiltersAndSort() {
         if (!this.filter) this.filter = new TasksFilter(this.tasks);
         else this.filter.setTasks(this.tasks);
-
         this.filteredTasks = this.filter.filterAndSort({
             searchText: this.searchInput?.value || '',
             priority: this.priorityFilter?.value || 'all',
             status: this.statusFilter?.value || 'all',
             sortType: this.sortSelect?.value || 'deadline_asc'
         });
-
         this.renderTasksList();
     }
 
@@ -188,90 +189,17 @@ export class TasksForm {
         return fiveForm;
     }
 
-    escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, (m) => {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    showConfirmDialog(message) {
-        return new Promise((resolve) => {
-            const overlay = document.createElement('div');
-            overlay.className = 'modal-overlay';
-            overlay.innerHTML = `
-                <div class="modal-content">
-                    <h3 style="margin-bottom: 0.5rem;">Подтверждение</h3>
-                    <p style="margin: 1rem 0; text-align: center;">${this.escapeHtml(message)}</p>
-                    <div class="modal-buttons" style="justify-content: center;">
-                        <button class="modal-btn save" id="confirm-yes">Да, удалить</button>
-                        <button class="modal-btn cancel confirm-cancel" id="confirm-no">Отмена</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-
-            const yesBtn = overlay.querySelector('#confirm-yes');
-            const noBtn = overlay.querySelector('#confirm-no');
-
-            const cleanup = (result) => {
-                overlay.remove();
-                resolve(result);
-            };
-
-            yesBtn.addEventListener('click', () => cleanup(true));
-            noBtn.addEventListener('click', () => cleanup(false));
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) cleanup(false);
-            });
-        });
-    }
-
-    showInfoDialog(message) {
-        return new Promise((resolve) => {
-            const overlay = document.createElement('div');
-            overlay.className = 'modal-overlay';
-            overlay.innerHTML = `
-                <div class="modal-content">
-                    <h3 style="margin-bottom: 0.5rem;">Сообщение</h3>
-                    <p style="margin: 1rem 0; text-align: center;">${this.escapeHtml(message)}</p>
-                    <div class="modal-buttons" style="justify-content: center;">
-                        <button class="modal-btn save" id="info-ok">OK</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-
-            const okBtn = overlay.querySelector('#info-ok');
-
-            const cleanup = () => {
-                overlay.remove();
-                resolve();
-            };
-
-            okBtn.addEventListener('click', cleanup);
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) cleanup();
-            });
-        });
-    }
-
     deleteCompletedTasks() {
         const completedTasks = this.tasks.filter(task => task.completed);
         const count = completedTasks.length;
         if (count === 0) {
-            this.showInfoDialog('Нет завершённых задач для удаления');
+            ModalDialog.showInfo('Нет завершённых задач для удаления');
             return;
         }
-
         const adjective = this.getDeclensionForms(count, 'завершённую', 'завершённые', 'завершённых');
         const noun = this.getDeclensionForms(count, 'задачу', 'задачи', 'задач');
         const message = `Вы уверены, что хотите удалить ${count} ${adjective} ${noun}?`;
-
-        this.showConfirmDialog(message).then((confirmed) => {
+        ModalDialog.showConfirm(message).then((confirmed) => {
             if (confirmed) {
                 this.tasks = this.tasks.filter(task => !task.completed);
                 this.saveToLocalStorage();

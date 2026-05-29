@@ -1,5 +1,6 @@
 import { BasePage } from './BasePage.js';
 import { UserService } from '../services/UserService.js';
+import { ModalDialog } from '../components/ModalDialog.js';
 
 export class ProfilePage extends BasePage {
     constructor() {
@@ -15,9 +16,7 @@ export class ProfilePage extends BasePage {
     async loadAndRenderProfile() {
         const container = document.querySelector('.container');
         if (!container) return;
-        
         container.innerHTML = '<div class="loading-spinner">Загрузка профиля...</div>';
-
         let user = UserService.getSavedUser();
         if (!user) {
             try {
@@ -27,7 +26,6 @@ export class ProfilePage extends BasePage {
                 user = UserService.getFallbackUser();
             }
         }
-
         this.userData = user;
         this.renderProfile(container);
     }
@@ -44,7 +42,6 @@ export class ProfilePage extends BasePage {
                 </div>
             </div>
         `;
-
         const changeBtn = document.getElementById('change-user-btn');
         if (changeBtn) {
             changeBtn.addEventListener('click', async () => {
@@ -52,12 +49,10 @@ export class ProfilePage extends BasePage {
                 changeBtn.textContent = 'Загрузка...';
                 try {
                     await UserService.refreshUser();
-                    window.location.reload();
                 } catch (error) {
-                    alert('Не удалось сменить пользователя. Проверьте интернет-соединение.');
-                    changeBtn.disabled = false;
-                    changeBtn.textContent = 'Сменить пользователя';
+                    await ModalDialog.showInfo('Не удалось загрузить профиль с сервера. Используем гостевой профиль.', 'Ошибка');
                 }
+                window.location.reload();
             });
         }
     }

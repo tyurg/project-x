@@ -39,27 +39,27 @@ export class TasksModal {
             <div class="modal-content">
                 <h3>${isEdit ? 'Редактировать задачу' : 'Новая задача'}</h3>
                 <div class="form-group">
-                    <label>Название *</label>
+                    <label for="modal-title">Название *</label>
                     <input type="text" id="modal-title" name="title" class="modal-input" placeholder="Введите название" value="${this.escapeHtml(isEdit ? taskData.title : '')}" maxlength="100" autocomplete="off">
                     <div class="error-message" data-for="title"></div>
                 </div>
                 <div class="form-group">
-                    <label>Описание (необязательно)</label>
+                    <label for="modal-description">Описание (необязательно)</label>
                     <textarea id="modal-description" name="description" class="modal-input" rows="3" placeholder="Введите описание" maxlength="500" autocomplete="off">${this.escapeHtml(isEdit ? taskData.description || '' : '')}</textarea>
                 </div>
                 <div class="form-group">
-                    <label>Приоритет</label>
+                    <label for="modal-priority">Приоритет</label>
                     <select id="modal-priority" name="priority" class="modal-select" autocomplete="off">
                         ${prioritiesOptions}
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Дедлайн</label>
+                    <label for="modal-deadline">Дедлайн</label>
                     <input type="datetime-local" id="modal-deadline" name="deadline" class="modal-input" value="${isEdit && taskData.deadline ? taskData.deadline : ''}" ${deadlineMinAttr} autocomplete="off">
                     <div class="error-message" data-for="deadline"></div>
                 </div>
                 <div class="form-group">
-                    <label>Категория</label>
+                    <label for="modal-category">Категория</label>
                     <select id="modal-category" name="category" class="modal-select" autocomplete="off">
                         ${categoriesOptions}
                     </select>

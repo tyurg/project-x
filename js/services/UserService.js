@@ -11,15 +11,23 @@ export class UserService {
 
     static async refreshUser() {
         localStorage.removeItem(STORAGE_KEYS.TASKS);
-        const newUser = await this.loadNewUser();
-        window.dispatchEvent(new CustomEvent('userChanged', { detail: newUser }));
-        return newUser;
+        try {
+            const newUser = await this.loadNewUser();
+            window.dispatchEvent(new CustomEvent('userChanged', { detail: newUser }));
+            return newUser;
+        } catch (error) {
+            console.error('Ошибка при обновлении пользователя:', error);
+            alert('Не удалось загрузить профиль с сервера. Проверьте интернет-соединение. Используем гостевой профиль.');
+            const fallbackUser = this.getFallbackUser();
+            window.dispatchEvent(new CustomEvent('userChanged', { detail: fallbackUser }));
+            return fallbackUser;
+        }
     }
 
     static async loadNewUser() {
         try {
             const response = await fetch(API_BASE_URL);
-            if (!response.ok) throw new Error('Ошибка загрузки профиля');
+            if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
             const data = await response.json();
             const user = data.results[0];
             const userData = {
@@ -32,16 +40,21 @@ export class UserService {
             localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(userData));
             return userData;
         } catch (error) {
-            const fallback = {
-                id: 'guest',
-                name: 'Гость',
-                email: 'guest@example.com',
-                avatar: 'img/avatar.svg',
-                location: 'Не указано'
-            };
-            localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(fallback));
-            return fallback;
+            console.error('Ошибка загрузки профиля из API:', error);
+            throw error;
         }
+    }
+
+    static getFallbackUser() {
+        const fallback = {
+            id: 'guest',
+            name: 'Гость',
+            email: 'guest@example.com',
+            avatar: 'img/avatar.svg',
+            location: 'Не указано'
+        };
+        localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(fallback));
+        return fallback;
     }
 
     static getSavedUser() {

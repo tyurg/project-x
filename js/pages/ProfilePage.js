@@ -20,7 +20,12 @@ export class ProfilePage extends BasePage {
 
         let user = UserService.getSavedUser();
         if (!user) {
-            user = await UserService.fetchUser();
+            try {
+                user = await UserService.fetchUser();
+            } catch (error) {
+                console.error('Ошибка загрузки профиля:', error);
+                user = UserService.getFallbackUser();
+            }
         }
 
         this.userData = user;
@@ -45,8 +50,14 @@ export class ProfilePage extends BasePage {
             changeBtn.addEventListener('click', async () => {
                 changeBtn.disabled = true;
                 changeBtn.textContent = 'Загрузка...';
-                await UserService.refreshUser();
-                window.location.reload();
+                try {
+                    await UserService.refreshUser();
+                    window.location.reload();
+                } catch (error) {
+                    alert('Не удалось сменить пользователя. Проверьте интернет-соединение.');
+                    changeBtn.disabled = false;
+                    changeBtn.textContent = 'Сменить пользователя';
+                }
             });
         }
     }

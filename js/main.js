@@ -5,9 +5,33 @@ import { ProfilePage } from './pages/ProfilePage.js';
 import { HelpPage } from './pages/HelpPage.js';
 import { UserService } from './services/UserService.js';
 
+function showLoadingIndicator() {
+    const headerContainer = document.getElementById('header-container');
+    if (headerContainer) {
+        headerContainer.innerHTML = `
+            <div style="background: #f0f8ff; padding: 1rem; text-align: center;">
+                Загрузка профиля...
+            </div>
+        `;
+    }
+}
+
+function showErrorMessage(message) {
+    alert(message);
+}
+
 async function preloadUserProfile() {
     if (UserService.getSavedUser()) return;
-    await UserService.fetchUser();
+
+    showLoadingIndicator();
+
+    try {
+        await UserService.loadNewUser();
+    } catch (error) {
+        console.error('Ошибка при загрузке профиля из API:', error);
+        showErrorMessage('Не удалось загрузить профиль с сервера. Используем локальные данные.');
+        UserService.getFallbackUser();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

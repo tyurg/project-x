@@ -23,7 +23,7 @@ body {
 
 #wrapper,
 .container {
-    margin: auto;
+    margin: 2rem auto;
     width: 50%;
     min-width: 18.75rem;
     padding: 1.5rem;

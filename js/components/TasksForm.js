@@ -179,13 +179,32 @@ export class TasksForm {
         this.applyFiltersAndSort();
     }
 
+    // ========== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ СКЛОНЕНИЯ ==========
+    getDeclensionForms(number, oneForm, twoForm, fiveForm) {
+        const n = Math.abs(number) % 100;
+        if (n >= 11 && n <= 19) return fiveForm;
+        const lastDigit = n % 10;
+        if (lastDigit === 1) return oneForm;
+        if (lastDigit >= 2 && lastDigit <= 4) return twoForm;
+        return fiveForm;
+    }
+    // ==========================================================
+
     deleteCompletedTasks() {
         const completedTasks = this.tasks.filter(task => task.completed);
-        if (completedTasks.length === 0) {
+        const count = completedTasks.length;
+        if (count === 0) {
             alert('Нет завершённых задач для удаления');
             return;
         }
-        if (confirm(`Вы уверены, что хотите удалить ${completedTasks.length} завершённых задач?`)) {
+
+        // Определяем нужную форму прилагательного и существительного
+        const adjective = this.getDeclensionForms(count, 'завершённую', 'завершённые', 'завершённых');
+        const noun = this.getDeclensionForms(count, 'задачу', 'задачи', 'задач');
+        
+        const message = `Вы уверены, что хотите удалить ${count} ${adjective} ${noun}?`;
+        
+        if (confirm(message)) {
             this.tasks = this.tasks.filter(task => !task.completed);
             this.saveToLocalStorage();
             this.applyFiltersAndSort();

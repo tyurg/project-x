@@ -179,7 +179,6 @@ export class TasksForm {
         this.applyFiltersAndSort();
     }
 
-    // ========== УНИВЕРСАЛЬНОЕ СКЛОНЕНИЕ ==========
     getDeclensionForms(number, oneForm, twoForm, fiveForm) {
         const n = Math.abs(number) % 100;
         if (n >= 11 && n <= 19) return fiveForm;
@@ -189,7 +188,6 @@ export class TasksForm {
         return fiveForm;
     }
 
-    // ========== ПОДТВЕРЖДАЮЩИЙ ДИАЛОГ ==========
     escapeHtml(str) {
         if (!str) return '';
         return str.replace(/[&<>]/g, (m) => {
@@ -232,7 +230,6 @@ export class TasksForm {
         });
     }
 
-    // ========== ИНФОРМАЦИОННЫЙ ДИАЛОГ (вместо alert) ==========
     showInfoDialog(message) {
         return new Promise((resolve) => {
             const overlay = document.createElement('div');
@@ -261,7 +258,6 @@ export class TasksForm {
             });
         });
     }
-    // ========================================================
 
     deleteCompletedTasks() {
         const completedTasks = this.tasks.filter(task => task.completed);

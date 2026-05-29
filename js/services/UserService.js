@@ -36,7 +36,7 @@ export class UserService {
                 id: 'guest',
                 name: 'Гость',
                 email: 'guest@example.com',
-                avatar: 'img/avatar.svg',   // ← замена на локальный файл
+                avatar: 'img/avatar.svg',
                 location: 'Не указано'
             };
             localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(fallback));

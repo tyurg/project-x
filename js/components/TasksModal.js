@@ -12,21 +12,21 @@ export class TasksModal {
         this.editingTaskIndex = taskData ? taskData.editingIndex : null;
         const isEdit = taskData !== null;
 
-        // Опции категорий
+
         let categoriesOptions = '';
         for (const [value, label] of Object.entries(TASK_CATEGORIES)) {
             const selected = (isEdit && taskData.category === value) ? 'selected' : '';
             categoriesOptions += `<option value="${value}" ${selected}>${label}</option>`;
         }
 
-        // Опции приоритетов
+
         let prioritiesOptions = '';
         for (const [value, label] of Object.entries(TASK_PRIORITIES)) {
             const selected = (isEdit && taskData.priority === value) ? 'selected' : '';
             prioritiesOptions += `<option value="${value}" ${selected}>${label}</option>`;
         }
 
-        // Формируем атрибут min для поля дедлайн (всегда – текущее время)
+
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');

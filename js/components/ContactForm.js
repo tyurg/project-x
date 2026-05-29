@@ -78,7 +78,6 @@ export class ContactForm {
     }
 
     initValidation() {
-        // Валидация ФИО
         this.fioInput.addEventListener('beforeinput', (e) => {
             if (e.data && /\d/.test(e.data)) {
                 e.preventDefault();
@@ -87,7 +86,6 @@ export class ContactForm {
         this.fioInput.addEventListener('blur', () => this.validateFIO(true));
         this.fioInput.addEventListener('input', () => this.validateFIO(false));
 
-        // Валидация телефона: только цифры, не более 11, форматирование
         this.phoneInput.addEventListener('beforeinput', (e) => {
             if (e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward') return;
             if (e.data && !/^\d$/.test(e.data)) {
@@ -188,7 +186,7 @@ export class ContactForm {
         if (showErrors) {
             this.errorDivs.phone.textContent = error;
             this.errorDivs.phone.style.display = error ? 'block' : 'none';
-            this.phoneInput.style.borderColor = error ? 'red' : '#aaa';  // убрали зелёный
+            this.phoneInput.style.borderColor = error ? 'red' : '#aaa';
         } else {
             this.errorDivs.phone.style.display = 'none';
             this.phoneInput.style.borderColor = '#aaa';

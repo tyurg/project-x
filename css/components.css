@@ -445,3 +445,11 @@
 .toast-notification.fade-out {
     opacity: 0;
 }
+
+.modal-content .confirm-cancel {
+    background: #da5959;
+    color: white;
+}
+.modal-content .confirm-cancel:hover {
+    background: #c84646;
+}

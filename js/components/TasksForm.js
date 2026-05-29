@@ -179,7 +179,7 @@ export class TasksForm {
         this.applyFiltersAndSort();
     }
 
-    // ========== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ СКЛОНЕНИЯ ==========
+    // ========== УНИВЕРСАЛЬНОЕ СКЛОНЕНИЕ ==========
     getDeclensionForms(number, oneForm, twoForm, fiveForm) {
         const n = Math.abs(number) % 100;
         if (n >= 11 && n <= 19) return fiveForm;
@@ -188,27 +188,100 @@ export class TasksForm {
         if (lastDigit >= 2 && lastDigit <= 4) return twoForm;
         return fiveForm;
     }
-    // ==========================================================
+
+    // ========== ПОДТВЕРЖДАЮЩИЙ ДИАЛОГ ==========
+    escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, (m) => {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    showConfirmDialog(message) {
+        return new Promise((resolve) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-content">
+                    <h3 style="margin-bottom: 0.5rem;">Подтверждение</h3>
+                    <p style="margin: 1rem 0; text-align: center;">${this.escapeHtml(message)}</p>
+                    <div class="modal-buttons" style="justify-content: center;">
+                        <button class="modal-btn save" id="confirm-yes">Да, удалить</button>
+                        <button class="modal-btn cancel confirm-cancel" id="confirm-no">Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            const yesBtn = overlay.querySelector('#confirm-yes');
+            const noBtn = overlay.querySelector('#confirm-no');
+
+            const cleanup = (result) => {
+                overlay.remove();
+                resolve(result);
+            };
+
+            yesBtn.addEventListener('click', () => cleanup(true));
+            noBtn.addEventListener('click', () => cleanup(false));
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) cleanup(false);
+            });
+        });
+    }
+
+    // ========== ИНФОРМАЦИОННЫЙ ДИАЛОГ (вместо alert) ==========
+    showInfoDialog(message) {
+        return new Promise((resolve) => {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.innerHTML = `
+                <div class="modal-content">
+                    <h3 style="margin-bottom: 0.5rem;">Сообщение</h3>
+                    <p style="margin: 1rem 0; text-align: center;">${this.escapeHtml(message)}</p>
+                    <div class="modal-buttons" style="justify-content: center;">
+                        <button class="modal-btn save" id="info-ok">OK</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            const okBtn = overlay.querySelector('#info-ok');
+
+            const cleanup = () => {
+                overlay.remove();
+                resolve();
+            };
+
+            okBtn.addEventListener('click', cleanup);
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) cleanup();
+            });
+        });
+    }
+    // ========================================================
 
     deleteCompletedTasks() {
         const completedTasks = this.tasks.filter(task => task.completed);
         const count = completedTasks.length;
         if (count === 0) {
-            alert('Нет завершённых задач для удаления');
+            this.showInfoDialog('Нет завершённых задач для удаления');
             return;
         }
 
-        // Определяем нужную форму прилагательного и существительного
         const adjective = this.getDeclensionForms(count, 'завершённую', 'завершённые', 'завершённых');
         const noun = this.getDeclensionForms(count, 'задачу', 'задачи', 'задач');
-        
         const message = `Вы уверены, что хотите удалить ${count} ${adjective} ${noun}?`;
-        
-        if (confirm(message)) {
-            this.tasks = this.tasks.filter(task => !task.completed);
-            this.saveToLocalStorage();
-            this.applyFiltersAndSort();
-        }
+
+        this.showConfirmDialog(message).then((confirmed) => {
+            if (confirmed) {
+                this.tasks = this.tasks.filter(task => !task.completed);
+                this.saveToLocalStorage();
+                this.applyFiltersAndSort();
+            }
+        });
     }
 
     openAddModal() {

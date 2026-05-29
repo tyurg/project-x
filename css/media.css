@@ -1,4 +1,7 @@
 @media (max-width: 1023px) and (min-width: 768px) {
+    footer {
+        font-size: 0.8rem;
+    }
     .nav-list {
         margin: 0 6rem;
     }
@@ -26,6 +29,10 @@
 }
 
 @media (max-width: 767px) {
+    footer {
+        font-size: 0.7rem;
+    }
+
     #wrapper,
     .container {
         width: 90%;
@@ -147,7 +154,7 @@
     .change-user-btn {
         min-height: 44px;
         padding: 0.5rem 1rem;
-        font-size: 1rem;
+        font-size: 0.75rem;
     }
     .delete-task-button,
     .edit-task-button {

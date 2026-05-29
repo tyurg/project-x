@@ -175,6 +175,7 @@
 .add-task-button {
     width: 50%;
     height: 2rem;
+    border: none;
     border-radius: 0.5rem;
     color: #f0f8ff;
     display: flex;

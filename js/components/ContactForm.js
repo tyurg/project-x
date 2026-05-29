@@ -154,7 +154,6 @@ export class ContactForm {
         if (!val) {
             error = VALIDATION_MESSAGES.FIO_REQUIRED;
         } else {
-            // Регулярка: 2-3 слова из русских букв, каждое от 2 до 20 символов, разделены пробелом
             const fioRegex = /^[а-яё]{2,20}(?: [а-яё]{2,20}){1,2}$/i;
             if (!fioRegex.test(val)) {
                 error = VALIDATION_MESSAGES.FIO_INVALID_CHARS;
@@ -189,7 +188,7 @@ export class ContactForm {
         if (showErrors) {
             this.errorDivs.phone.textContent = error;
             this.errorDivs.phone.style.display = error ? 'block' : 'none';
-            this.phoneInput.style.borderColor = error ? 'red' : 'green';
+            this.phoneInput.style.borderColor = error ? 'red' : '#aaa';  // убрали зелёный
         } else {
             this.errorDivs.phone.style.display = 'none';
             this.phoneInput.style.borderColor = '#aaa';

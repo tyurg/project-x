@@ -26,6 +26,15 @@ export class TasksModal {
             prioritiesOptions += `<option value="${value}" ${selected}>${label}</option>`;
         }
 
+        // Формируем атрибут min для поля дедлайн (всегда – текущее время)
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const deadlineMinAttr = `min="${year}-${month}-${day}T${hours}:${minutes}"`;
+
         this.modal = document.createElement('div');
         this.modal.className = 'modal-overlay';
         this.modal.innerHTML = `
@@ -48,7 +57,7 @@ export class TasksModal {
                 </div>
                 <div class="form-group">
                     <label>Дедлайн</label>
-                    <input type="datetime-local" id="modal-deadline" class="modal-input" value="${isEdit && taskData.deadline ? taskData.deadline : ''}" autocomplete="off">
+                    <input type="datetime-local" id="modal-deadline" class="modal-input" value="${isEdit && taskData.deadline ? taskData.deadline : ''}" ${deadlineMinAttr} autocomplete="off">
                     <div class="error-message" data-for="deadline"></div>
                 </div>
                 <div class="form-group">

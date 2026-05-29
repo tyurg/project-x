@@ -1,0 +1,112 @@
+#menu-toggle,
+.menu-icon {
+    display: none;
+}
+
+nav {
+    background: #f0f8ff;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+nav ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    list-style: none;
+    gap: 2rem;
+    margin: 0;
+    padding: 1rem 0;
+}
+
+nav a {
+    color: #273c46;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.2rem;
+    padding: 0.5rem 0.875rem;
+}
+
+nav a:hover {
+    color: #72808b;
+}
+
+.logo {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.logo a {
+    display: block;
+    line-height: 0;
+}
+
+.logo img {
+    height: 2rem;
+    width: auto;
+    max-width: 100%;
+    display: block;
+}
+
+.nav-list {
+    margin: 0 4rem;
+}
+
+footer {
+    background-color: #f0f8ff;
+    color: #273c46;
+    position: fixed;
+    width: 100%;
+    min-height: 2rem;
+    z-index: 100;
+    bottom: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+footer p {
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+footer a {
+    text-decoration: none;
+    margin: 0 0.5rem;
+}
+
+footer a:hover {
+    color: #f0f8ff;
+}
+
+.user-info-header {
+    position: absolute;
+    right: 1rem;
+    top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f0f8ff;
+    padding: 0.3rem 0.8rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.header-avatar {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.header-name {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #273c46;
+}

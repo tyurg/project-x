@@ -45,7 +45,7 @@ export class Header {
             <nav class="main-nav">
                 <div class="logo">
                     <a href="${homeLink}">
-                        <img src="${logoSrc}" alt="Логотип">
+                        <img src="${logoSrc}" alt="Логотип" width="auto" height="32">
                     </a>
                 </div>
                 <input type="checkbox" id="menu-toggle">
@@ -62,7 +62,6 @@ export class Header {
             </nav>
         `;
     }
-
     updateUserInfo() {
         if (!this.container) return;
         const userDiv = this.container.querySelector('.user-info-header');

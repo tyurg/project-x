@@ -228,7 +228,7 @@
 }
 
 .modal-content {
-    background: #ffffff;
+    background: #f0f8ff;
     padding: 2rem;
     border-radius: 1rem;
     width: 90%;
@@ -317,7 +317,7 @@
 
 .modal-btn.save {
     background: #6294d6;
-    color: #fff;
+    color: #f0f8ff;
 }
 
 .modal-btn.save:hover {
@@ -325,12 +325,12 @@
 }
 
 .modal-btn.cancel {
-    background: #e0e8f0;
-    color: #273c46;
+    background: #c84646;
+    color: #f0f8ff;
 }
 
 .modal-btn.cancel:hover {
-    background: #cbd8e3;
+    background: #9b3636;
 }
 
 .filter-panel {
@@ -366,7 +366,7 @@
     padding: 0.5rem 0.8rem;
     border: 0.0625rem solid #c0c0c0;
     border-radius: 1.5rem;
-    background: #fff;
+    background: #f0f8ff;
     width: 100%;
     font-size: 0.9rem;
     transition: all 0.2s;
@@ -384,7 +384,7 @@
     width: 2rem;
     height: 2rem;
     border-radius: 0.5rem;
-    color: #fff;
+    color: #f0f8ff;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -404,7 +404,7 @@
     width: 50%;
     height: 2rem;
     border-radius: 0.5rem;
-    color: #fff;
+    color: #f0f8ff;
     display: flex;
     justify-content: center;
     align-items: center;

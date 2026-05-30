@@ -334,8 +334,6 @@
 }
 
 .filter-panel {
-    display: flex;
-    flex-wrap: wrap;
     gap: 1.5rem;
     margin-bottom: 2rem;
     padding: 0.5rem 1.5rem;

@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         case 'profile.html':
             new ProfilePage().init();
             break;
-        case 'tasks.html':
+        case 'index.html':
             new TasksPage().init();
             break;
         case 'help.html':

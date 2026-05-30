@@ -6,9 +6,9 @@ export class Header {
         this.userData = null;
 
         const pathParts = window.location.pathname.split('/');
-        this.currentPage = pathParts.pop() || 'tasks.html';
+        this.currentPage = pathParts.pop() || 'index.html';
         if (!this.currentPage.endsWith('.html')) {
-            this.currentPage = 'tasks.html';
+            this.currentPage = 'index.html';
         }
 
         this.loadUserData();
@@ -31,7 +31,7 @@ export class Header {
         const repoName = isGitHubPages ? `/${window.location.pathname.split('/')[1]}/` : '/';
 
         const logoSrc = `${repoName}img/logo.svg`;
-        const homeLink = `${repoName}tasks.html`;
+        const homeLink = `${repoName}index.html`;
 
         const navItemsHTML = NAVIGATION_LINKS.map(({ href, title, target = '_self' }) => {
             const fileName = href.replace('./', '');

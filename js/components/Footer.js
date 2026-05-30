@@ -7,7 +7,7 @@ export class Footer {
         return `
             <footer class="site-footer">
                 <div class="footer-copyright">
-                    <strong>&copy; ${new Date().getFullYear()} Все права защищены</strong>
+                    <strong>&copy; ${new Date().getFullYear()} Bce права защищены</strong>
                 </div>
             </footer>
         `;

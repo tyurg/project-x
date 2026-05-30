@@ -50,7 +50,7 @@ export class ProfilePage extends BasePage {
                 try {
                     await UserService.refreshUser();
                 } catch (error) {
-                    await ModalDialog.showInfo('Не удалось загрузить профиль с сервера. Используем гостевой профиль.', 'Ошибка');
+                    await ModalDialog.showInfo('He удалось загрузить профиль c сервера. Используем гостевой профиль.', 'Ошибка');
                 }
                 window.location.reload();
             });

@@ -47,7 +47,7 @@ export class TasksListView {
 
         const deleteBtn = document.createElement('span');
         deleteBtn.className = 'delete-task-button';
-        deleteBtn.textContent = '×';
+        deleteBtn.textContent = 'x';
         deleteBtn.addEventListener('click', () => {
             if (this.onDelete) this.onDelete(task);
         });

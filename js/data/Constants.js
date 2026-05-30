@@ -29,7 +29,7 @@ export const VALIDATION_MESSAGES = {
     FIO_INVALID_CHARS: "ФИО должно состоять из русских букв (2-20 символов)",
     PHONE_REQUIRED: "Введите номер телефона",
     PHONE_INVALID: "Номер должен содержать ровно 11 цифр",
-    PHONE_START_ERROR: "Номер должен начинаться с 8",
+    PHONE_START_ERROR: "Номер должен начинаться c 8",
     DATE_REQUIRED: "Выберите дату",
     DATE_INVALID: "Дата не может быть раньше сегодняшней",
     PHOTO_TYPE: "Файл должен быть изображением",

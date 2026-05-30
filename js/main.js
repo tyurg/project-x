@@ -17,6 +17,13 @@ function showLoadingIndicator() {
     }
 }
 
+function hideLoader() {
+    const loader = document.getElementById('app-loader');
+    if (loader) {
+        loader.style.display = 'none';
+    }
+}
+
 async function preloadUserProfile() {
     if (UserService.getSavedUser()) return;
     showLoadingIndicator();
@@ -31,7 +38,9 @@ async function preloadUserProfile() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     await preloadUserProfile();
+
     const currentPage = window.location.pathname.split('/').pop();
+
     switch (currentPage) {
         case 'profile.html':
             new ProfilePage().init();
@@ -49,4 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             footer.init();
             break;
     }
+
+    setTimeout(() => hideLoader(), 10);
 });

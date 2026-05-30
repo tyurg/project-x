@@ -50,7 +50,7 @@ export class UserService {
             name: 'Гость',
             email: 'guest@example.com',
             avatar: 'img/avatar.svg',
-            location: 'Не указано'
+            location: 'He указано'
         };
         localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(fallback));
         return fallback;

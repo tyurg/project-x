@@ -154,8 +154,9 @@
     box-shadow: 0 0 0.3125rem rgba(98, 148, 214, 0.3);
 }
 
-.contact-form textarea {
+textarea {
     resize: vertical;
+    min-height: 4rem;
 }
 
 .submit-btn {

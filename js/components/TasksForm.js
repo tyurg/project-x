@@ -71,7 +71,6 @@ export class TasksForm {
         const panel = document.createElement('div');
         panel.className = 'filter-panel';
 
-        // Поиск
         const searchGroup = document.createElement('div');
         searchGroup.className = 'filter-group';
         const searchLabel = document.createElement('label');
@@ -87,7 +86,6 @@ export class TasksForm {
         searchGroup.appendChild(this.searchInput);
         panel.appendChild(searchGroup);
 
-        // Приоритет
         const priorityGroup = document.createElement('div');
         priorityGroup.className = 'filter-group';
         const priorityLabel = document.createElement('label');
@@ -97,7 +95,7 @@ export class TasksForm {
         this.priorityFilter.id = 'filter-priority';
         this.priorityFilter.className = 'filter-select';
         this.priorityFilter.innerHTML = `
-            <option value="all">Все</option>
+            <option value="all">Bce</option>
             <option value="low">Низкий</option>
             <option value="medium">Средний</option>
             <option value="high">Высокий</option>
@@ -107,7 +105,6 @@ export class TasksForm {
         priorityGroup.appendChild(this.priorityFilter);
         panel.appendChild(priorityGroup);
 
-        // Статус
         const statusGroup = document.createElement('div');
         statusGroup.className = 'filter-group';
         const statusLabel = document.createElement('label');
@@ -117,7 +114,7 @@ export class TasksForm {
         this.statusFilter.id = 'filter-status';
         this.statusFilter.className = 'filter-select';
         this.statusFilter.innerHTML = `
-            <option value="all">Все</option>
+            <option value="all">Bce</option>
             <option value="active">Активные</option>
             <option value="completed">Завершённые</option>
         `;
@@ -126,7 +123,6 @@ export class TasksForm {
         statusGroup.appendChild(this.statusFilter);
         panel.appendChild(statusGroup);
 
-        // Сортировка
         const sortGroup = document.createElement('div');
         sortGroup.className = 'filter-group';
         const sortLabel = document.createElement('label');

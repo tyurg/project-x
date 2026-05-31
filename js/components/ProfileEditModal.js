@@ -19,6 +19,37 @@ export class ProfileEditModal {
         });
     }
 
+    compressImage(file, targetMaxSize = 400, quality = 0.85) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > height && width > targetMaxSize) {
+                        height = (height * targetMaxSize) / width;
+                        width = targetMaxSize;
+                    } else if (height > targetMaxSize) {
+                        width = (width * targetMaxSize) / height;
+                        height = targetMaxSize;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const compressed = canvas.toDataURL('image/jpeg', quality);
+                    resolve(compressed);
+                };
+                img.onerror = reject;
+                img.src = e.target.result;
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
     show() {
         if (this.modal) this.modal.remove();
 
@@ -44,8 +75,8 @@ export class ProfileEditModal {
                 <div class="form-group">
                     <label for="edit-avatar">Аватар (изображение)</label>
                     <input type="file" id="edit-avatar" accept="image/*" autocomplete="off">
-                    <div id="avatar-preview" class="photo-preview" style="margin-top: 0.5rem;">
-                        <img src="${this.userData.avatar}" alt="Предпросмотр" style="max-width: 100px; border-radius: 50%;">
+                    <div id="avatar-preview" class="photo-preview" style="margin-top: 0.5rem; width: 100px; height: 100px; border-radius: 50%; overflow: hidden;">
+                        <img src="${this.userData.avatar}" alt="Предпросмотр" style="width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <div class="error-message" data-for="avatar" style="display:none;"></div>
                 </div>
@@ -108,7 +139,7 @@ export class ProfileEditModal {
         nameInput.addEventListener('input', validateForm);
         emailInput.addEventListener('input', validateForm);
 
-        avatarInput.addEventListener('change', () => {
+        avatarInput.addEventListener('change', async () => {
             const file = avatarInput.files[0];
             avatarError.style.display = 'none';
             if (file) {
@@ -124,15 +155,31 @@ export class ProfileEditModal {
                     avatarInput.value = '';
                     return;
                 }
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.newAvatarBase64 = e.target.result;
-                    avatarPreview.innerHTML = `<img src="${this.newAvatarBase64}" alt="Предпросмотр" style="max-width: 100px; border-radius: 50%;">`;
-                };
-                reader.readAsDataURL(file);
+
+                try {
+                    // Если файл уже маленький (менее 200 КБ) — не сжимаем
+                    let finalBase64;
+                    if (file.size <= 200 * 1024) {
+                        const reader = new FileReader();
+                        finalBase64 = await new Promise((resolve, reject) => {
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(file);
+                        });
+                    } else {
+                        finalBase64 = await this.compressImage(file, 400, 0.85);
+                    }
+                    this.newAvatarBase64 = finalBase64;
+                    avatarPreview.innerHTML = `<img src="${finalBase64}" alt="Предпросмотр" style="width: 100%; height: 100%; object-fit: cover;">`;
+                } catch (err) {
+                    console.error('Ошибка при обработке изображения:', err);
+                    avatarError.textContent = 'Не удалось обработать изображение';
+                    avatarError.style.display = 'block';
+                    avatarInput.value = '';
+                }
             } else {
                 this.newAvatarBase64 = null;
-                avatarPreview.innerHTML = `<img src="${this.userData.avatar}" alt="Предпросмотр" style="max-width: 100px; border-radius: 50%;">`;
+                avatarPreview.innerHTML = `<img src="${this.userData.avatar}" alt="Предпросмотр" style="width: 100%; height: 100%; object-fit: cover;">`;
             }
         });
 
@@ -154,12 +201,26 @@ export class ProfileEditModal {
             };
 
             if (this.newAvatarBase64) {
+                // Дополнительная проверка размера строки (не более 500 КБ)
+                if (this.newAvatarBase64.length > 500 * 1024) {
+                    await ModalDialog.showInfo('Изображение слишком большое после сжатия. Попробуйте другое изображение.', 'Ошибка');
+                    return;
+                }
                 updatedUser.avatar = this.newAvatarBase64;
             }
 
-            UserService.updateUser(updatedUser);
-            this.modal.remove();
-            if (this.onSave) this.onSave(updatedUser);
+            try {
+                UserService.updateUser(updatedUser);
+                this.modal.remove();
+                if (this.onSave) this.onSave(updatedUser);
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    await ModalDialog.showInfo('Слишком много данных в хранилище. Удалите часть задач или выберите аватар меньшего размера.', 'Ошибка');
+                } else {
+                    console.error(e);
+                    await ModalDialog.showInfo('Произошла ошибка при сохранении', 'Ошибка');
+                }
+            }
         });
 
         cancelBtn.addEventListener('click', () => this.modal.remove());

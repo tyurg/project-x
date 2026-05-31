@@ -40,7 +40,7 @@ export class ProfilePage extends BasePage {
                     <p><strong>Email:</strong> ${this.userData.email}</p>
                     <p><strong>Местоположение:</strong> ${this.userData.location}</p>
                     <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
-                        <button id="edit-profile-btn" class="change-user-btn";">Редактировать профиль</button>
+                        <button id="edit-profile-btn" class="change-user-btn">Редактировать профиль</button>
                         <button id="change-user-btn" class="change-user-btn">Сменить пользователя</button>
                     </div>
                 </div>

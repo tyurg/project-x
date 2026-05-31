@@ -66,4 +66,17 @@ export class UserService {
         window.dispatchEvent(new CustomEvent('userChanged', { detail: updatedUser }));
         return updatedUser;
     }
+    static updateUser(updatedUser) {
+        try {
+            localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(updatedUser));
+            window.dispatchEvent(new CustomEvent('userChanged', { detail: updatedUser }));
+            return updatedUser;
+        } catch (e) {
+            if (e.name === 'QuotaExceededError') {
+                console.error('Превышен лимит localStorage');
+                throw e;
+            }
+            throw e;
+        }
+    }
 }

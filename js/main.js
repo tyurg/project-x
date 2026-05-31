@@ -42,10 +42,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const currentPage = window.location.pathname.split('/').pop();
 
     switch (currentPage) {
-        case 'profile.html':
+        case 'index.html':
             new ProfilePage().init();
             break;
-        case 'index.html':
+        case 'tasks.html':
             new TasksPage().init();
             break;
         case 'help.html':

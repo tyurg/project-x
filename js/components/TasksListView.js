@@ -58,7 +58,6 @@ export class TasksListView {
         deleteBtn.className = 'delete-task-button';
         deleteBtn.textContent = 'x';
         deleteBtn.addEventListener('click', () => {
-            // Анимированное удаление
             this.removeTaskWithAnimation(taskDiv, () => {
                 if (this.onDelete) this.onDelete(task);
             });
@@ -72,20 +71,27 @@ export class TasksListView {
         const details = document.createElement('div');
         details.className = 'task-details';
 
-        const priorityItem = this.createDetailItem('Приоритет:', 'span',
-            TASK_PRIORITIES[task.priority] || 'Неизвестно');
+        // Сначала основные поля: приоритет, дедлайн, категория
+        const priorityItem = this.createDetailItem(
+            'Приоритет:', 
+            'span', 
+            TASK_PRIORITIES[task.priority] || 'Неизвестно',
+            `priority-value-${task.priority}`
+        );
         const deadlineItem = this.createDetailItem('Дедлайн:', 'span',
             task.deadline ? new Date(task.deadline).toLocaleString() : 'не указан');
         const categoryItem = this.createDetailItem('Категория:', 'span',
             TASK_CATEGORIES[task.category] || 'Прочее');
-        if (task.description) {
-            const descItem = this.createDetailItem('Описание:', 'span', task.description);
-            details.appendChild(descItem);
-        }
 
         details.appendChild(priorityItem);
         details.appendChild(deadlineItem);
         details.appendChild(categoryItem);
+
+        // Описание — последним
+        if (task.description) {
+            const descItem = this.createDetailItem('Описание:', 'span', task.description);
+            details.appendChild(descItem);
+        }
 
         taskDiv.appendChild(header);
         taskDiv.appendChild(details);
@@ -99,7 +105,7 @@ export class TasksListView {
         }, 200);
     }
 
-    createDetailItem(labelText, tag, value) {
+    createDetailItem(labelText, tag, value, extraClass = '') {
         const div = document.createElement('div');
         div.className = 'detail-item';
         const labelSpan = document.createElement('span');
@@ -107,6 +113,9 @@ export class TasksListView {
         labelSpan.textContent = labelText;
         const valSpan = document.createElement(tag);
         valSpan.className = 'detail-value';
+        if (extraClass) {
+            valSpan.classList.add(extraClass);
+        }
         valSpan.textContent = value;
         div.appendChild(labelSpan);
         div.appendChild(valSpan);

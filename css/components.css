@@ -161,8 +161,7 @@
     opacity: 0.8;
 }
 
-.out-task.completed .task-title,
-.out-task.completed .task-description {
+.out-task.completed .task-title {
     text-decoration: line-through;
     color: #72808b;
 }
@@ -171,6 +170,13 @@
 .out-task.completed .task-category,
 .out-task.completed .task-deadline {
     opacity: 0.7;
+}
+
+.out-task.completed .priority-value-low,
+.out-task.completed .priority-value-medium,
+.out-task.completed .priority-value-high {
+    color: #72808b;
+    font-weight: normal;
 }
 
 .add-task-button {
@@ -436,4 +442,19 @@
     background: rgba(255, 255, 255, 0.4);
     border-radius: 0.75rem;
     margin: 1rem 0;
+}
+
+.priority-value-low {
+    color: #59da59;
+    font-weight: bold;
+}
+
+.priority-value-medium {
+    color: #dad859;
+    font-weight: bold;
+}
+
+.priority-value-high {
+    color: #da5959;
+    font-weight: bold;
 }

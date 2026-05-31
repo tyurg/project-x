@@ -10,6 +10,15 @@ export class TasksListView {
 
     renderTasks(tasks) {
         this.container.innerHTML = '';
+        
+        if (tasks.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'empty-tasks-message';
+            emptyMessage.innerHTML = 'Задачи не найдены';
+            this.container.appendChild(emptyMessage);
+            return;
+        }
+
         tasks.forEach((task, idx) => {
             const taskEl = this.createTaskElement(task, idx);
             this.container.appendChild(taskEl);
@@ -49,7 +58,10 @@ export class TasksListView {
         deleteBtn.className = 'delete-task-button';
         deleteBtn.textContent = 'x';
         deleteBtn.addEventListener('click', () => {
-            if (this.onDelete) this.onDelete(task);
+            // Анимированное удаление
+            this.removeTaskWithAnimation(taskDiv, () => {
+                if (this.onDelete) this.onDelete(task);
+            });
         });
 
         header.appendChild(checkbox);
@@ -78,6 +90,13 @@ export class TasksListView {
         taskDiv.appendChild(header);
         taskDiv.appendChild(details);
         return taskDiv;
+    }
+
+    removeTaskWithAnimation(taskElement, callback) {
+        taskElement.classList.add('removing');
+        setTimeout(() => {
+            if (callback) callback();
+        }, 200);
     }
 
     createDetailItem(labelText, tag, value) {

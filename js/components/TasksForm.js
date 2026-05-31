@@ -158,7 +158,7 @@ export class TasksForm {
 
     renderTasksList() {
         if (!this.listView) return;
-        this.listView.renderTasks(this.filteredTasks);
+        this.listView.renderTasks(this.filteredTasks, this.tasks.length);
         this.listView.updateDeadlineIndicators(this.filteredTasks);
     }
 

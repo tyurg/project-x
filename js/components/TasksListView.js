@@ -8,13 +8,19 @@ export class TasksListView {
         this.onDelete = onDelete;
     }
 
-    renderTasks(tasks) {
+    renderTasks(tasks, totalTasksCount) {
         this.container.innerHTML = '';
         
         if (tasks.length === 0) {
             const emptyMessage = document.createElement('div');
             emptyMessage.className = 'empty-tasks-message';
-            emptyMessage.innerHTML = 'Задачи не найдены';
+            
+            if (totalTasksCount === 0) {
+                emptyMessage.innerHTML = 'У вас пока нет задач';
+            } else {
+                emptyMessage.innerHTML = 'Задачи не найдены';
+            }
+            
             this.container.appendChild(emptyMessage);
             return;
         }

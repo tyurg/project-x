@@ -60,4 +60,10 @@ export class UserService {
         const saved = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
         return saved ? JSON.parse(saved) : null;
     }
+
+    static updateUser(updatedUser) {
+        localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(updatedUser));
+        window.dispatchEvent(new CustomEvent('userChanged', { detail: updatedUser }));
+        return updatedUser;
+    }
 }

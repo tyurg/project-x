@@ -1,4 +1,4 @@
-import { NAVIGATION_LINKS } from '../data/constants.js';
+import { NAVIGATION_LINKS } from '../data/Constants.js';
 
 export class Header {
     constructor(containerId = 'header-container') {

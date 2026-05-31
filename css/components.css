@@ -22,6 +22,7 @@
     border-left-style: solid;
     border-left-color: transparent;
     transition: border-left-color 0.2s;
+    user-select: none;
 }
 
 .task-header {

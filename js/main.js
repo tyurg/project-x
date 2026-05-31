@@ -9,11 +9,7 @@ import { ModalDialog } from './components/ModalDialog.js';
 function showLoadingIndicator() {
     const headerContainer = document.getElementById('header-container');
     if (headerContainer) {
-        headerContainer.innerHTML = `
-            <div style="background: #f0f8ff; padding: 1rem; text-align: center;">
-                Загрузка профиля...
-            </div>
-        `;
+        headerContainer.innerHTML = `<div class="loading-header">Загрузка профиля...</div>`;
     }
 }
 

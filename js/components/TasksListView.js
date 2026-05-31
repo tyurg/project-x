@@ -77,7 +77,6 @@ export class TasksListView {
         const details = document.createElement('div');
         details.className = 'task-details';
 
-        // Сначала основные поля: приоритет, дедлайн, категория
         const priorityItem = this.createDetailItem(
             'Приоритет:', 
             'span', 
@@ -93,7 +92,6 @@ export class TasksListView {
         details.appendChild(deadlineItem);
         details.appendChild(categoryItem);
 
-        // Описание — последним
         if (task.description) {
             const descItem = this.createDetailItem('Описание:', 'span', task.description);
             details.appendChild(descItem);

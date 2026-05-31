@@ -458,3 +458,43 @@
     color: #da5959;
     font-weight: bold;
 }
+
+.modal-content h3 {
+    margin-bottom: 0.5rem;
+}
+
+.modal-content p {
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.modal-buttons.center {
+    justify-content: center;
+}
+
+.avatar-preview-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.avatar-preview-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.loading-header {
+    background: #f0f8ff;
+    padding: 1rem;
+    text-align: center;
+}

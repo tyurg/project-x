@@ -61,12 +61,12 @@ export class ProfileEditModal {
                 <div class="form-group">
                     <label for="edit-name">Имя *</label>
                     <input type="text" id="edit-name" class="modal-input" value="${this.escapeHtml(this.userData.name)}" maxlength="100" autocomplete="off">
-                    <div class="error-message" data-for="name" style="display:none;"></div>
+                    <div class="error-message" data-for="name"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit-email">Email *</label>
                     <input type="email" id="edit-email" class="modal-input" value="${this.escapeHtml(this.userData.email)}" maxlength="100" autocomplete="off">
-                    <div class="error-message" data-for="email" style="display:none;"></div>
+                    <div class="error-message" data-for="email"></div>
                 </div>
                 <div class="form-group">
                     <label for="edit-location">Местоположение</label>
@@ -75,10 +75,8 @@ export class ProfileEditModal {
                 <div class="form-group">
                     <label for="edit-avatar">Аватар (изображение)</label>
                     <input type="file" id="edit-avatar" accept="image/*" autocomplete="off">
-                    <div id="avatar-preview" class="photo-preview" style="margin-top: 0.5rem; width: 100px; height: 100px; border-radius: 50%; overflow: hidden;">
-                        <img src="${this.userData.avatar}" alt="Предпросмотр" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                    <div class="error-message" data-for="avatar" style="display:none;"></div>
+                    <div id="avatar-preview" class="avatar-preview-circle"></div>
+                    <div class="error-message" data-for="avatar"></div>
                 </div>
                 <div class="modal-buttons">
                     <button id="profile-save" class="modal-btn save">Сохранить</button>
@@ -100,6 +98,8 @@ export class ProfileEditModal {
         const emailError = this.modal.querySelector('.error-message[data-for="email"]');
         const avatarError = this.modal.querySelector('.error-message[data-for="avatar"]');
 
+        avatarPreview.innerHTML = `<img src="${this.userData.avatar}" alt="Предпросмотр">`;
+
         const validateForm = () => {
             let isValid = true;
             const name = nameInput.value.trim();
@@ -111,6 +111,7 @@ export class ProfileEditModal {
                 nameInput.classList.add('error');
                 isValid = false;
             } else {
+                nameError.textContent = '';
                 nameError.style.display = 'none';
                 nameInput.classList.remove('error');
             }
@@ -127,6 +128,7 @@ export class ProfileEditModal {
                 emailInput.classList.add('error');
                 isValid = false;
             } else {
+                emailError.textContent = '';
                 emailError.style.display = 'none';
                 emailInput.classList.remove('error');
             }
@@ -141,6 +143,7 @@ export class ProfileEditModal {
 
         avatarInput.addEventListener('change', async () => {
             const file = avatarInput.files[0];
+            avatarError.textContent = '';
             avatarError.style.display = 'none';
             if (file) {
                 if (!file.type.startsWith('image/')) {
@@ -157,7 +160,6 @@ export class ProfileEditModal {
                 }
 
                 try {
-                    // Если файл уже маленький (менее 200 КБ) — не сжимаем
                     let finalBase64;
                     if (file.size <= 200 * 1024) {
                         const reader = new FileReader();
@@ -170,7 +172,7 @@ export class ProfileEditModal {
                         finalBase64 = await this.compressImage(file, 400, 0.85);
                     }
                     this.newAvatarBase64 = finalBase64;
-                    avatarPreview.innerHTML = `<img src="${finalBase64}" alt="Предпросмотр" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    avatarPreview.innerHTML = `<img src="${finalBase64}" alt="Предпросмотр">`;
                 } catch (err) {
                     console.error('Ошибка при обработке изображения:', err);
                     avatarError.textContent = 'Не удалось обработать изображение';
@@ -179,7 +181,7 @@ export class ProfileEditModal {
                 }
             } else {
                 this.newAvatarBase64 = null;
-                avatarPreview.innerHTML = `<img src="${this.userData.avatar}" alt="Предпросмотр" style="width: 100%; height: 100%; object-fit: cover;">`;
+                avatarPreview.innerHTML = `<img src="${this.userData.avatar}" alt="Предпросмотр">`;
             }
         });
 
@@ -201,7 +203,6 @@ export class ProfileEditModal {
             };
 
             if (this.newAvatarBase64) {
-                // Дополнительная проверка размера строки (не более 500 КБ)
                 if (this.newAvatarBase64.length > 500 * 1024) {
                     await ModalDialog.showInfo('Изображение слишком большое после сжатия. Попробуйте другое изображение.', 'Ошибка');
                     return;

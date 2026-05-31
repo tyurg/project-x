@@ -15,9 +15,9 @@ export class ModalDialog {
             overlay.className = 'modal-overlay';
             overlay.innerHTML = `
                 <div class="modal-content">
-                    <h3 style="margin-bottom: 0.5rem;">${this.escapeHtml(title)}</h3>
-                    <p style="margin: 1rem 0; text-align: center;">${this.escapeHtml(message)}</p>
-                    <div class="modal-buttons" style="justify-content: center;">
+                    <h3>${this.escapeHtml(title)}</h3>
+                    <p>${this.escapeHtml(message)}</p>
+                    <div class="modal-buttons center">
                         <button class="modal-btn save" id="info-ok">OK</button>
                     </div>
                 </div>
@@ -41,9 +41,9 @@ export class ModalDialog {
             overlay.className = 'modal-overlay';
             overlay.innerHTML = `
                 <div class="modal-content">
-                    <h3 style="margin-bottom: 0.5rem;">${this.escapeHtml(title)}</h3>
-                    <p style="margin: 1rem 0; text-align: center;">${this.escapeHtml(message)}</p>
-                    <div class="modal-buttons" style="justify-content: center;">
+                    <h3>${this.escapeHtml(title)}</h3>
+                    <p>${this.escapeHtml(message)}</p>
+                    <div class="modal-buttons center">
                         <button class="modal-btn save" id="confirm-yes">Да</button>
                         <button class="modal-btn cancel confirm-cancel" id="confirm-no">Нет</button>
                     </div>

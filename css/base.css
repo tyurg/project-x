@@ -12,6 +12,8 @@ body {
     padding-bottom: 3.75rem;
     min-height: 100vh;
     box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .active {

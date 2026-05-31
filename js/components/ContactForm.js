@@ -153,7 +153,7 @@ export class ContactForm {
         if (!val) {
             error = VALIDATION_MESSAGES.FIO_REQUIRED;
         } else {
-            const fioRegex = /^[а-яё]{2,20}(?: [а-яё]{2,20}){1,2}$/i;
+            const fioRegex = /^[а-яё](?: [а-яё]){1,2}$/i;
             if (!fioRegex.test(val)) {
                 error = VALIDATION_MESSAGES.FIO_INVALID_CHARS;
             }

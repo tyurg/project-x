@@ -26,7 +26,7 @@ export const VALIDATION_MESSAGES = {
     TITLE_REQUIRED: "Название обязательно",
     DEADLINE_PAST: "Дедлайн не может быть в прошлом",
     FIO_REQUIRED: "Введите ФИО",
-    FIO_INVALID_CHARS: "ФИО должно состоять из русских букв (2-20 символов)",
+    FIO_INVALID_CHARS: "ФИО должно состоять из русских букв",
     PHONE_REQUIRED: "Введите номер телефона",
     PHONE_INVALID: "Номер должен содержать ровно 11 цифр",
     PHONE_START_ERROR: "Номер должен начинаться c 8",

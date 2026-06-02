@@ -132,10 +132,7 @@
         margin-left: auto;
         order: 3;
     }
-    .header-avatar {
-        width: 2rem;
-        height: 2rem;
-    }
+    
     .header-name {
         display: none;
     }

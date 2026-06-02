@@ -99,8 +99,8 @@ footer a:hover {
 }
 
 .header-avatar {
-    width: 2rem;
-    height: 2rem;
+    width: 2.4rem;
+    height: 2.4rem;
     border-radius: 50%;
     object-fit: cover;
 }

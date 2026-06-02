@@ -211,7 +211,7 @@ export class ProfileEditModal {
             }
 
             try {
-                UserService.updateUser(updatedUser);
+                await UserService.updateUserOnServer(updatedUser);
                 this.modal.remove();
                 if (this.onSave) this.onSave(updatedUser);
             } catch (e) {

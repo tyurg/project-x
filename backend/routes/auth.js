@@ -20,7 +20,7 @@ router.post('/register', async (req, res) => {
             [email, hashedPassword, name, avatar || '', location || '', created_at]
         );
         const user = result.rows[0];
-        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '30d' });
         res.status(201).json({ token, user });
     } catch (err) {
         if (err.code === '23505') {

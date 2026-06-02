@@ -12,7 +12,6 @@ export async function sendContactEmail(contactData, userId) {
         ${photoBase64 && photoBase64.startsWith('data:image/') ? '<p><strong>Фото:</strong> (приложено отдельным файлом)</p>' : ''}
     `;
 
-    // Подготавливаем данные для запроса
     const emailData = {
         from: process.env.RESEND_FROM_EMAIL,
         to: process.env.ADMIN_EMAIL,
@@ -20,12 +19,11 @@ export async function sendContactEmail(contactData, userId) {
         html: htmlContent,
     };
 
-    // Если есть фото, добавляем вложение
     if (photoBase64 && photoBase64.startsWith('data:image/')) {
-        // Извлекаем тип и чистые base64-данные
+
         const matches = photoBase64.match(/^data:image\/(\w+);base64,(.+)$/);
         if (matches) {
-            const imageType = matches[1]; // png, jpeg и т.д.
+            const imageType = matches[1];
             const base64Data = matches[2];
             const filename = `photo-${Date.now()}.${imageType}`;
             

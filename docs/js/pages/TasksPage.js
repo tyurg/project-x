@@ -69,7 +69,6 @@ export class TasksPage extends BasePage {
     }
 
     createFilterPanel() {
-        // ... (без изменений, как было в оригинале)
         const panel = document.createElement('div');
         panel.className = 'filter-panel';
 
@@ -205,26 +204,21 @@ export class TasksPage extends BasePage {
         const confirmed = await ModalDialog.showConfirm(message);
         if (!confirmed) return;
 
-        // 1. Находим DOM-элементы завершённых задач
         const taskElements = document.querySelectorAll('.out-task');
         const completedElements = Array.from(taskElements).filter(el => {
-            // Ищем задачу по id или по тексту заголовка – лучше по id
             const taskId = parseInt(el.getAttribute('data-task-id'));
             return completedTasks.some(task => task.id === taskId);
         });
 
-        // Если по какой-то причине не нашли элементы, удаляем без анимации
         if (completedElements.length === 0) {
             await this._deleteCompletedTasksFromServer(completedTasks);
             return;
         }
 
-        // 2. Добавляем анимацию
         let animationsCompleted = 0;
         const onAnimationEnd = () => {
             animationsCompleted++;
             if (animationsCompleted === completedElements.length) {
-                // 3. После анимации удаляем с сервера
                 this._deleteCompletedTasksFromServer(completedTasks);
             }
         };
@@ -234,7 +228,6 @@ export class TasksPage extends BasePage {
             el.classList.add('removing');
         });
 
-        // Fallback на случай, если transitionend не сработает (например, нет перехода)
         setTimeout(() => {
             if (animationsCompleted !== completedElements.length) {
                 this._deleteCompletedTasksFromServer(completedTasks);
@@ -242,7 +235,6 @@ export class TasksPage extends BasePage {
         }, 250);
     }
 
-    // Выносим логику удаления в отдельный метод, чтобы не дублировать
     async _deleteCompletedTasksFromServer(completedTasks) {
         const token = UserService.getToken();
         if (!token) return;

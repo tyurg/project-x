@@ -19,7 +19,6 @@ export class Header {
     }
 
     render() {
-        // Простые относительные пути
         const navItemsHTML = NAVIGATION_LINKS.map(({ href, title }) => {
             const fileName = href.replace('./', '');
             const isActive = this.currentPage === fileName ? 'class="active"' : '';

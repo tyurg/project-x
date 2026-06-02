@@ -104,8 +104,7 @@ export class LoginPage {
                 await UserService.login(email, password);
                 window.location.href = 'tasks.html';
             } catch (err) {
-                // Показываем ошибку от сервера в отдельном блоке (можно добавить)
-                alert(err.message); // или создать общий div для ошибок
+                alert(err.message);
             }
         });
     }

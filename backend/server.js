@@ -7,7 +7,6 @@ import contactsRoutes from './routes/contacts.js';
 
 const app = express();
 
-// Полностью открытый CORS (для отладки)
 app.use(cors({
     origin: true,
     credentials: true,
@@ -15,7 +14,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Обработка preflight-запросов
 app.options('*', cors());
 
 app.use(express.json({ limit: '5mb' }));

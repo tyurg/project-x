@@ -17,7 +17,6 @@ router.post('/', authenticateToken, async (req, res) => {
             [req.userId, fio, phone, desiredDate, message || '', photoBase64 || null, Date.now()]
         );
 
-        // Передаём userEmail в функцию отправки
         await sendContactEmail({ fio, phone, desiredDate, message, photoBase64, userEmail }, req.userId);
 
         res.status(201).json({ success: true });

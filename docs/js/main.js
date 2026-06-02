@@ -14,11 +14,11 @@ async function initApp() {
     const currentPage = window.location.pathname.split('/').pop();
     const publicPages = ['login.html', 'register.html'];
     if (publicPages.includes(currentPage)) {
-        // Для страниц входа/регистрации не проверяем авторизацию
+
         if (currentPage === 'login.html') {
-            // Импортируем логин (позже)
+
         } else if (currentPage === 'register.html') {
-            // Импортируем регистрацию
+
         }
         hideLoader();
         return;

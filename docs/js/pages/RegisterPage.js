@@ -131,7 +131,7 @@ export class RegisterPage {
                 await UserService.register(email, password, name, '', 'Не указано');
                 window.location.href = 'tasks.html';
             } catch (err) {
-                alert(err.message); // или вывести в специальный блок ошибки
+                alert(err.message);
             }
         });
     }

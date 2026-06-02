@@ -19,7 +19,8 @@ export const TASK_PRIORITIES = {
 
 export const STORAGE_KEYS = {
     TASKS: "tasks",
-    USER_PROFILE: "userProfile"
+    USER_PROFILE: "userProfile",
+    TOKEN: "token"
 };
 
 export const VALIDATION_MESSAGES = {
@@ -38,4 +39,14 @@ export const VALIDATION_MESSAGES = {
 
 export const DEADLINE_WARNING_HOURS = 24;
 
-export const API_BASE_URL = "https://randomuser.me/api/";
+const getApiBaseUrl = () => {
+    // Если фронт открыт не через localhost, используем IP бэкенда
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'http://localhost:3000/api';
+    }
+    // Для доступа по сети: фронтенд на порту 5502, бэкенд на 3000
+    return `http://${hostname}:3000/api`;
+};
+
+export const API_BASE_URL = getApiBaseUrl();

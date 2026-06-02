@@ -7,19 +7,18 @@ import contactsRoutes from './routes/contacts.js';
 
 const app = express();
 
-// Определяем список разрешённых доменов
+// Разрешённые источники
 const allowedOrigins = [
-  'https://tyurg.github.io',                 // ваш сайт на GitHub Pages
-  'http://localhost:5500',                   // для локальной разработки (Live Server)
-  'http://127.0.0.1:5500',                   // альтернативный адрес локалки
-  'http://localhost:5501',                   // если вдруг порт другой
-  'http://localhost:5502'                    // если вдруг порт другой
+  'https://tyurg.github.io',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  'http://localhost:5501',
+  'http://localhost:5502'
 ];
 
 // Настройка CORS
-const corsOptions = {
+app.use(cors({
   origin: function (origin, callback) {
-    // Разрешаем запросы без origin (например, из Postman или curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -27,15 +26,12 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true,                         // важно для кук и авторизации
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-};
+}));
 
-app.use(cors(corsOptions));
-
-// Обработка preflight-запросов (OPTIONS)
-app.options('*', cors(corsOptions));
+// Не нужен отдельный app.options('*', ...) для Express 5
 
 app.use(express.json({ limit: '5mb' }));
 

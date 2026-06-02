@@ -40,13 +40,12 @@ export const VALIDATION_MESSAGES = {
 export const DEADLINE_WARNING_HOURS = 24;
 
 const getApiBaseUrl = () => {
-    // Если фронт открыт не через localhost, используем IP бэкенда
-    const hostname = window.location.hostname;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    // Для локальной разработки (если нужно)
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         return 'http://localhost:3000/api';
     }
-    // Для доступа по сети: фронтенд на порту 5502, бэкенд на 3000
-    return `http://${hostname}:3000/api`;
+    // Для продакшена — ваш бэкенд на Render
+    return 'https://taskmanager-api.onrender.com/api';
 };
 
 export const API_BASE_URL = getApiBaseUrl();

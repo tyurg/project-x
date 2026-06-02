@@ -1,82 +1,100 @@
 import { STORAGE_KEYS, API_BASE_URL } from '../data/Constants.js';
 
 export class UserService {
-    static async fetchUser() {
-        const saved = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
-        if (saved) {
-            return JSON.parse(saved);
+    static async login(email, password) {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Login failed');
         }
-        return this.loadNewUser();
+        const { token, user } = await response.json();
+        localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+        localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(user));
+        return user;
     }
 
-    static async refreshUser() {
+    static async register(email, password, name, avatar, location) {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, name, avatar, location })
+        });
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Registration failed');
+        }
+        const { token, user } = await response.json();
+        localStorage.setItem(STORAGE_KEYS.TOKEN, token);
+        localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(user));
+        return user;
+    }
+
+    static logout() {
+        localStorage.removeItem(STORAGE_KEYS.TOKEN);
+        localStorage.removeItem(STORAGE_KEYS.USER_PROFILE);
         localStorage.removeItem(STORAGE_KEYS.TASKS);
-        try {
-            const newUser = await this.loadNewUser();
-            window.dispatchEvent(new CustomEvent('userChanged', { detail: newUser }));
-            return newUser;
-        } catch (error) {
-            console.error('Ошибка при обновлении пользователя:', error);
-            const fallbackUser = this.getFallbackUser();
-            window.dispatchEvent(new CustomEvent('userChanged', { detail: fallbackUser }));
-            throw error;
-        }
+        window.location.href = 'login.html';
     }
 
-    static async loadNewUser() {
-        try {
-            const response = await fetch(API_BASE_URL);
-            if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
-            const data = await response.json();
-            const user = data.results[0];
-            const userData = {
-                id: user.login.uuid,
-                name: `${user.name.first} ${user.name.last}`,
-                email: user.email,
-                avatar: user.picture.large,
-                location: `${user.location.city}, ${user.location.country}`
-            };
-            localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(userData));
-            return userData;
-        } catch (error) {
-            console.error('Ошибка загрузки профиля из API:', error);
-            throw error;
-        }
-    }
-
-    static getFallbackUser() {
-        const fallback = {
-            id: 'guest',
-            name: 'Гость',
-            email: 'guest@example.com',
-            avatar: 'img/avatar.svg',
-            location: 'He указано'
-        };
-        localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(fallback));
-        return fallback;
+    static getToken() {
+        return localStorage.getItem(STORAGE_KEYS.TOKEN);
     }
 
     static getSavedUser() {
-        const saved = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
-        return saved ? JSON.parse(saved) : null;
+        const user = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
+        return user ? JSON.parse(user) : null;
     }
 
-    static updateUser(updatedUser) {
+    static async getCurrentUser() {
+        const token = this.getToken();
+        if (!token) return null;
+        try {
+            const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    this.logout();
+                }
+                return null;
+            }
+            const user = await response.json();
+            localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(user));
+            return user;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    }
+
+    static async updateUser(updatedUser) {
         localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(updatedUser));
         window.dispatchEvent(new CustomEvent('userChanged', { detail: updatedUser }));
         return updatedUser;
     }
-    static updateUser(updatedUser) {
-        try {
-            localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(updatedUser));
-            window.dispatchEvent(new CustomEvent('userChanged', { detail: updatedUser }));
-            return updatedUser;
-        } catch (e) {
-            if (e.name === 'QuotaExceededError') {
-                console.error('Превышен лимит localStorage');
-                throw e;
-            }
-            throw e;
-        }
+
+    static async updateUserOnServer(updatedUser) {
+    const token = this.getToken();
+    if (!token) throw new Error('Not authenticated');
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(updatedUser)
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Update failed');
+    }
+    const user = await response.json();
+    localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(user));
+    window.dispatchEvent(new CustomEvent('userChanged', { detail: user }));
+    return user;
     }
 }

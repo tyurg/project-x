@@ -3,8 +3,7 @@ import { TasksFilter } from '../components/TasksFilter.js';
 import { TasksListView } from '../components/TasksListView.js';
 import { TasksModal } from '../components/TasksModal.js';
 import { ModalDialog } from '../components/ModalDialog.js';
-import { API_BASE_URL } from '../data/Constants.js';
-import { UserService } from '../services/UserService.js';
+import { STORAGE_KEYS } from '../data/Constants.js';
 
 export class TasksPage extends BasePage {
     constructor() {
@@ -60,7 +59,7 @@ export class TasksPage extends BasePage {
 
         const deleteCompletedBtn = document.createElement('button');
         deleteCompletedBtn.className = 'delete-completed-button';
-        deleteCompletedBtn.textContent = 'Удалить выполненные задачи';
+        deleteCompletedBtn.textContent = 'Удалить завершённые задачи';
         deleteCompletedBtn.addEventListener('click', () => this.deleteCompletedTasks());
 
         container.appendChild(addBtn);
@@ -69,7 +68,6 @@ export class TasksPage extends BasePage {
     }
 
     createFilterPanel() {
-        // ... (без изменений, как было в оригинале)
         const panel = document.createElement('div');
         panel.className = 'filter-panel';
 
@@ -137,6 +135,7 @@ export class TasksPage extends BasePage {
     applyFiltersAndSort() {
         if (!this.filter) this.filter = new TasksFilter(this.tasks);
         else this.filter.setTasks(this.tasks);
+
         this.filteredTasks = this.filter.filterAndSort({
             searchText: this.searchInput?.value || '',
             priority: this.priorityFilter?.value || 'all',
@@ -152,47 +151,21 @@ export class TasksPage extends BasePage {
         this.listView.updateDeadlineIndicators(this.filteredTasks);
     }
 
-    async onTaskCheckboxChange(task, completed) {
-        const token = UserService.getToken();
-        if (!token) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ ...task, completed })
-            });
-            if (!response.ok) throw new Error('Failed to update');
-            const updated = await response.json();
-            const index = this.tasks.findIndex(t => t.id === updated.id);
-            if (index !== -1) this.tasks[index] = updated;
-            this.applyFiltersAndSort();
-        } catch (err) {
-            console.error(err);
-            await ModalDialog.showInfo('Ошибка обновления задачи', 'Ошибка');
-        }
+    onTaskCheckboxChange(task, completed) {
+        const originalTask = this.tasks.find(t => t.createdAt === task.createdAt);
+        if (originalTask) originalTask.completed = completed;
+        this.saveToLocalStorage();
+        this.applyFiltersAndSort();
     }
 
-    async onTaskDelete(task) {
-        const token = UserService.getToken();
-        if (!token) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!response.ok) throw new Error('Failed to delete');
-            this.tasks = this.tasks.filter(t => t.id !== task.id);
-            this.applyFiltersAndSort();
-        } catch (err) {
-            console.error(err);
-            await ModalDialog.showInfo('Ошибка удаления задачи', 'Ошибка');
-        }
+    onTaskDelete(task) {
+        const index = this.tasks.findIndex(t => t.createdAt === task.createdAt);
+        if (index !== -1) this.tasks.splice(index, 1);
+        this.saveToLocalStorage();
+        this.applyFiltersAndSort();
     }
 
-    async deleteCompletedTasks() {
+    deleteCompletedTasks() {
         const completedTasks = this.tasks.filter(task => task.completed);
         const count = completedTasks.length;
         if (count === 0) {
@@ -202,19 +175,13 @@ export class TasksPage extends BasePage {
         const adjective = this.getDeclensionForms(count, 'завершённую', 'завершённые', 'завершённых');
         const noun = this.getDeclensionForms(count, 'задачу', 'задачи', 'задач');
         const message = `Вы уверены, что хотите удалить ${count} ${adjective} ${noun}?`;
-        const confirmed = await ModalDialog.showConfirm(message);
-        if (confirmed) {
-            const token = UserService.getToken();
-            if (!token) return;
-            for (const task of completedTasks) {
-                await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+        ModalDialog.showConfirm(message).then((confirmed) => {
+            if (confirmed) {
+                this.tasks = this.tasks.filter(task => !task.completed);
+                this.saveToLocalStorage();
+                this.applyFiltersAndSort();
             }
-            this.tasks = this.tasks.filter(task => !task.completed);
-            this.applyFiltersAndSort();
-        }
+        });
     }
 
     getDeclensionForms(number, oneForm, twoForm, fiveForm) {
@@ -232,67 +199,51 @@ export class TasksPage extends BasePage {
     }
 
     openEditModal(task) {
-        const taskData = { ...task, editingIndex: task.id };
+        const originalIndex = this.tasks.findIndex(t => t.createdAt === task.createdAt);
+        if (originalIndex === -1) return;
+        const taskData = { ...this.tasks[originalIndex], editingIndex: originalIndex };
         const modal = new TasksModal((result) => this.saveTaskFromModal(result));
         modal.show(taskData);
     }
 
-    async saveTaskFromModal(result) {
+    saveTaskFromModal(result) {
         const { title, description, priority, deadline, category, completed, editingIndex } = result;
-        const token = UserService.getToken();
-        if (!token) return;
-        try {
-            if (editingIndex) {
-                const response = await fetch(`${API_BASE_URL}/tasks/${editingIndex}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ title, description, priority, deadline, category, completed })
-                });
-                if (!response.ok) throw new Error('Update failed');
-                const updated = await response.json();
-                const index = this.tasks.findIndex(t => t.id === updated.id);
-                if (index !== -1) this.tasks[index] = updated;
-            } else {
-                const response = await fetch(`${API_BASE_URL}/tasks`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ title, description, priority, deadline, category, completed })
-                });
-                if (!response.ok) throw new Error('Create failed');
-                const newTask = await response.json();
-                this.tasks.push(newTask);
-            }
-            this.applyFiltersAndSort();
-        } catch (err) {
-            console.error(err);
-            await ModalDialog.showInfo('Ошибка сохранения задачи', 'Ошибка');
+        const taskData = {
+            title, description, priority, deadline, category, completed,
+            createdAt: null
+        };
+        if (editingIndex !== null && this.tasks[editingIndex]) {
+            taskData.createdAt = this.tasks[editingIndex].createdAt;
+            this.tasks[editingIndex] = taskData;
+        } else {
+            taskData.createdAt = Date.now();
+            this.tasks.push(taskData);
         }
+        this.saveToLocalStorage();
+        this.applyFiltersAndSort();
     }
 
-    async loadTasks() {
-        const token = UserService.getToken();
-        if (!token) return;
-        try {
-            const response = await fetch(`${API_BASE_URL}/tasks`, {
-                headers: { 'Authorization': `Bearer ${token}` }
+    saveToLocalStorage() {
+        localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(this.tasks));
+    }
+
+    loadTasks() {
+        const saved = localStorage.getItem(STORAGE_KEYS.TASKS);
+        if (saved) {
+            this.tasks = JSON.parse(saved);
+            this.tasks.forEach((task, idx) => {
+                if (!task.createdAt) task.createdAt = Date.now() - idx * 1000;
+                if (!task.description) task.description = '';
             });
-            if (!response.ok) throw new Error('Failed to load tasks');
-            this.tasks = await response.json();
-            this.applyFiltersAndSort();
-        } catch (err) {
-            console.error(err);
+        } else {
             this.tasks = [];
-            this.applyFiltersAndSort();
         }
+        this.applyFiltersAndSort();
     }
 
     handleUserChange() {
-        this.loadTasks();
+        this.tasks = [];
+        this.saveToLocalStorage();
+        this.applyFiltersAndSort();
     }
 }

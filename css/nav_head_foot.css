@@ -110,22 +110,3 @@ footer a:hover {
     font-weight: bold;
     color: #273c46;
 }
-
-.logout-button {
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
-    margin-left: 10px;
-    cursor: pointer;
-    font-size: 0.8rem;
-}
-.logout-button:hover {
-    background: #c82333;
-}
-.user-info-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}

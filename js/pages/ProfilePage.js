@@ -1,5 +1,6 @@
 import { BasePage } from './BasePage.js';
 import { UserService } from '../services/UserService.js';
+import { ModalDialog } from '../components/ModalDialog.js';
 import { ProfileEditModal } from '../components/ProfileEditModal.js';
 
 export class ProfilePage extends BasePage {
@@ -17,28 +18,30 @@ export class ProfilePage extends BasePage {
         const container = document.querySelector('.container');
         if (!container) return;
         container.innerHTML = '<div class="loading-spinner">Загрузка профиля...</div>';
-        this.userData = UserService.getSavedUser();
-        if (!this.userData) {
-            this.userData = await UserService.getCurrentUser();
+        let user = UserService.getSavedUser();
+        if (!user) {
+            try {
+                user = await UserService.fetchUser();
+            } catch (error) {
+                console.error('Ошибка загрузки профиля:', error);
+                user = UserService.getFallbackUser();
+            }
         }
+        this.userData = user;
         this.renderProfile(container);
     }
 
     renderProfile(container) {
-        if (!this.userData) {
-            container.innerHTML = '<p>Ошибка загрузки профиля</p>';
-            return;
-        }
         container.innerHTML = `
             <div class="profile-container">
                 <div class="profile-card">
-                    <img src="${this.userData.avatar || 'img/avatar.svg'}" alt="Avatar" class="profile-avatar">
+                    <img src="${this.userData.avatar}" alt="Avatar" class="profile-avatar">
                     <h2>${this.userData.name}</h2>
                     <p><strong>Email:</strong> ${this.userData.email}</p>
-                    <p><strong>Местоположение:</strong> ${this.userData.location || 'Не указано'}</p>
+                    <p><strong>Местоположение:</strong> ${this.userData.location}</p>
                     <div class="profile-button-group">
                         <button id="edit-profile-btn" class="change-user-btn">Редактировать профиль</button>
-                        <button id="change-user-btn" class="change-user-btn">Сменить пользователя (выход)</button>
+                        <button id="change-user-btn" class="change-user-btn">Сменить пользователя</button>
                     </div>
                 </div>
             </div>
@@ -50,16 +53,24 @@ export class ProfilePage extends BasePage {
         if (editBtn) {
             editBtn.addEventListener('click', () => this.openEditModal());
         }
+
         if (changeBtn) {
-            changeBtn.addEventListener('click', () => {
-                UserService.logout();
+            changeBtn.addEventListener('click', async () => {
+                changeBtn.disabled = true;
+                changeBtn.textContent = 'Загрузка...';
+                try {
+                    await UserService.refreshUser();
+                } catch (error) {
+                    await ModalDialog.showInfo('Не удалось загрузить профиль с сервера. Используем гостевой профиль.', 'Ошибка');
+                }
+                window.location.reload();
             });
         }
     }
 
     openEditModal() {
         if (!this.userData) return;
-        const modal = new ProfileEditModal(this.userData, async (updatedUser) => {
+        const modal = new ProfileEditModal(this.userData, (updatedUser) => {
             this.userData = updatedUser;
             const container = document.querySelector('.container');
             if (container) this.renderProfile(container);

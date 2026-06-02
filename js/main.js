@@ -4,42 +4,38 @@ import { TasksPage } from './pages/TasksPage.js';
 import { ProfilePage } from './pages/ProfilePage.js';
 import { HelpPage } from './pages/HelpPage.js';
 import { UserService } from './services/UserService.js';
+import { ModalDialog } from './components/ModalDialog.js';
+
+function showLoadingIndicator() {
+    const headerContainer = document.getElementById('header-container');
+    if (headerContainer) {
+        headerContainer.innerHTML = `<div class="loading-header">Загрузка профиля...</div>`;
+    }
+}
 
 function hideLoader() {
     const loader = document.getElementById('app-loader');
-    if (loader) loader.style.display = 'none';
+    if (loader) {
+        loader.style.display = 'none';
+    }
 }
 
-async function initApp() {
+async function preloadUserProfile() {
+    if (UserService.getSavedUser()) return;
+    showLoadingIndicator();
+    try {
+        await UserService.loadNewUser();
+    } catch (error) {
+        console.error('Ошибка при загрузке профиля из API:', error);
+        await ModalDialog.showInfo('Не удалось загрузить профиль с сервера. Используем локальные данные.', 'Ошибка');
+        UserService.getFallbackUser();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await preloadUserProfile();
+
     const currentPage = window.location.pathname.split('/').pop();
-    const publicPages = ['login.html', 'register.html'];
-    if (publicPages.includes(currentPage)) {
-        // Для страниц входа/регистрации не проверяем авторизацию
-        if (currentPage === 'login.html') {
-            // Импортируем логин (позже)
-        } else if (currentPage === 'register.html') {
-            // Импортируем регистрацию
-        }
-        hideLoader();
-        return;
-    }
-
-    const token = UserService.getToken();
-    if (!token) {
-        window.location.href = 'login.html';
-        return;
-    }
-
-    const user = await UserService.getCurrentUser();
-    if (!user) {
-        window.location.href = 'login.html';
-        return;
-    }
-
-    const header = new Header('header-container');
-    header.init();
-    const footer = new Footer('footer-container');
-    footer.init();
 
     switch (currentPage) {
         case 'index.html':
@@ -52,9 +48,12 @@ async function initApp() {
             new HelpPage().init();
             break;
         default:
+            const header = new Header('header-container');
+            header.init();
+            const footer = new Footer('footer-container');
+            footer.init();
             break;
     }
-    hideLoader();
-}
 
-document.addEventListener('DOMContentLoaded', initApp);
+    setTimeout(() => hideLoader(), 10);
+});

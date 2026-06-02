@@ -1,6 +1,5 @@
-import { VALIDATION_MESSAGES, API_BASE_URL } from '../data/Constants.js';
+import { VALIDATION_MESSAGES } from '../data/Constants.js';
 import { ModalDialog } from './ModalDialog.js';
-import { UserService } from '../services/UserService.js';
 
 export class ContactForm {
     constructor(containerId) {
@@ -261,47 +260,14 @@ export class ContactForm {
             const isPhotoValid = this.validatePhoto();
 
             if (isFioValid && isPhoneValid && isDateValid && isPhotoValid) {
-                const token = UserService.getToken();
-                if (!token) {
-                    await ModalDialog.showInfo('Вы не авторизованы', 'Ошибка');
-                    return;
+                await ModalDialog.showInfo('Форма успешно отправлена!', 'Успех');
+                this.form.reset();
+                this.photoPreview.innerHTML = '';
+                for (let key in this.errorDivs) {
+                    this.errorDivs[key].textContent = '';
+                    this.errorDivs[key].style.display = 'none';
                 }
-
-                const photoBase64 = this.photoPreview.querySelector('img')?.src || null;
-
-                const payload = {
-                    fio: this.fioInput.value.trim(),
-                    phone: this.getRawDigits(),
-                    desiredDate: this.dateInput.value,
-                    message: this.messageInput.value,
-                    photoBase64: photoBase64
-                };
-
-                try {
-                    const response = await fetch(`${API_BASE_URL}/contacts`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) {
-                        const errData = await response.json();
-                        throw new Error(errData.error || 'Ошибка отправки');
-                    }
-                    await ModalDialog.showInfo('Форма успешно отправлена!', 'Успех');
-                    this.form.reset();
-                    this.photoPreview.innerHTML = '';
-                    for (let key in this.errorDivs) {
-                        this.errorDivs[key].textContent = '';
-                        this.errorDivs[key].style.display = 'none';
-                    }
-                    this.updateSubmitButton();
-                } catch (err) {
-                    console.error(err);
-                    await ModalDialog.showInfo(err.message || 'Ошибка сервера', 'Ошибка');
-                }
+                this.updateSubmitButton();
             } else {
                 await ModalDialog.showInfo('Исправьте ошибки в форме', 'Ошибка');
             }

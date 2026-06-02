@@ -1,12 +1,12 @@
 import express from 'express';
 import { pool } from '../db.js';
 import { authenticateToken } from '../middleware/auth.js';
-import { sendContactEmail } from '../utils/resendEmail.js';   // импорт новой функции
+import { sendContactEmail } from '../utils/resendEmail.js';
 
 const router = express.Router();
 
 router.post('/', authenticateToken, async (req, res) => {
-    const { fio, phone, desiredDate, message, photoBase64 } = req.body;
+    const { fio, phone, desiredDate, message, photoBase64, userEmail } = req.body; // добавили userEmail
     if (!fio || !phone || !desiredDate) {
         return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -17,8 +17,8 @@ router.post('/', authenticateToken, async (req, res) => {
             [req.userId, fio, phone, desiredDate, message || '', photoBase64 || null, Date.now()]
         );
 
-        // Отправляем письмо через Resend (новый способ)
-        await sendContactEmail({ fio, phone, desiredDate, message, photoBase64 }, req.userId);
+        // Передаём userEmail в функцию отправки
+        await sendContactEmail({ fio, phone, desiredDate, message, photoBase64, userEmail }, req.userId);
 
         res.status(201).json({ success: true });
     } catch (err) {

@@ -1,14 +1,15 @@
 export async function sendContactEmail(contactData, userId) {
-    const { fio, phone, desiredDate, message, photoBase64 } = contactData;
+    const { fio, phone, desiredDate, message, photoBase64, userEmail } = contactData;
 
     const htmlContent = `
         <h2>Новое сообщение из формы обратной связи</h2>
         <p><strong>От пользователя (ID):</strong> ${userId}</p>
+        <p><strong>Email отправителя:</strong> ${userEmail || 'не указан'}</p>
         <p><strong>ФИО:</strong> ${fio}</p>
         <p><strong>Телефон:</strong> ${phone}</p>
         <p><strong>Желаемая дата связи:</strong> ${desiredDate}</p>
         <p><strong>Сообщение:</strong> ${message || '—'}</p>
-        <p><strong>Фото:</strong> (приложено отдельным файлом)</p>
+        ${photoBase64 && photoBase64.startsWith('data:image/') ? '<p><strong>Фото:</strong> (приложено отдельным файлом)</p>' : ''}
     `;
 
     // Подготавливаем данные для запроса

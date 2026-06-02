@@ -274,7 +274,8 @@ export class ContactForm {
                     phone: this.getRawDigits(),
                     desiredDate: this.dateInput.value,
                     message: this.messageInput.value,
-                    photoBase64: photoBase64
+                    photoBase64: photoBase64,
+                    userEmail: UserService.getSavedUser()?.email
                 };
 
                 try {

@@ -31,23 +31,23 @@ export class ContactForm {
                     <div class="form-group">
                         <label for="fio">ФИО</label>
                         <input type="text" id="fio" name="fio" placeholder="Иванов Иван Иванович" autocomplete="name" required>
-                        <div class="field-error" id="fio-error"></div>
+                        <div class="error-message" id="fio-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="desired-date">Желаемая дата связи</label>
                         <input type="date" id="desired-date" name="desired-date" min="${this.today}" autocomplete="off" required>
-                        <div class="field-error" id="date-error"></div>
+                        <div class="error-message" id="date-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="phone">Номер телефона</label>
                         <input type="tel" id="phone" name="phone" placeholder="8 900 000 00 00" autocomplete="tel" required>
-                        <div class="field-error" id="phone-error"></div>
+                        <div class="error-message" id="phone-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="photo-upload">Загрузить фотографию</label>
                         <input type="file" id="photo-upload" name="photo" accept="image/*" autocomplete="off">
                         <div id="photo-preview" class="photo-preview"></div>
-                        <div class="field-error" id="photo-error"></div>
+                        <div class="error-message" id="photo-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="message">Сообщение (необязательно)</label>

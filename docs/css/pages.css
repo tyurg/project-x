@@ -190,7 +190,7 @@ textarea {
     border: 1px solid #ccc;
 }
 
-.field-error {
+.error-message {
     color: #da5959;
     font-size: 0.7rem;
     margin-top: 0.2rem;
@@ -202,3 +202,91 @@ textarea {
 .form-group textarea.error {
     border-color: #da5959;
 }
+
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(2px);
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.auth-card h2 {
+    margin-bottom: 1.5rem;
+    color: #273c46;
+    font-size: 1.8rem;
+}
+
+.auth-card .form-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.auth-card label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    color: #273c46;
+}
+
+.auth-card input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 0.0625rem solid #b6c5d3;
+    border-radius: 0.5rem;
+    background-color: #f0f8ff;
+    box-sizing: border-box;
+    color: #273c46;
+    transition: 0.2s;
+}
+
+.auth-card input:focus {
+    outline: none;
+    border-color: #6294d6;
+    box-shadow: 0 0 0 0.2rem rgba(98, 148, 214, 0.2);
+}
+
+.auth-card button {
+    width: 100%;
+    margin-top: 1rem;
+    background: #6294d6;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.auth-card button:hover {
+    background: #4e80c2;
+}
+
+.auth-card .error {
+    color: #da5959;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.auth-card .link {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.auth-card .link a {
+    color: #273c46;
+    text-decoration: underline;
+}
+

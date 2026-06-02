@@ -34,7 +34,12 @@ export const VALIDATION_MESSAGES = {
     DATE_REQUIRED: "Выберите дату",
     DATE_INVALID: "Дата не может быть раньше сегодняшней",
     PHOTO_TYPE: "Файл должен быть изображением",
-    PHOTO_SIZE: "Размер не более 5 МБ"
+    PHOTO_SIZE: "Размер не более 5 МБ",
+    NAME_REQUIRED: "Имя обязательно",
+    EMAIL_REQUIRED: "Email обязателен",
+    EMAIL_INVALID: "Введите корректный email (например, user@example.com)",
+    PASSWORD_REQUIRED: "Пароль обязателен",
+    PASSWORD_MIN_LENGTH: "Пароль должен содержать минимум 6 символов"    
 };
 
 export const DEADLINE_WARNING_HOURS = 24;

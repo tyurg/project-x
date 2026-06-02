@@ -40,12 +40,10 @@ export const VALIDATION_MESSAGES = {
 export const DEADLINE_WARNING_HOURS = 24;
 
 const getApiBaseUrl = () => {
-    // Для локальной разработки (если нужно)
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         return 'http://localhost:3000/api';
     }
-    // Для продакшена — ваш бэкенд на Render
-    return 'https://taskmanager-api.onrender.com/api';
+    return 'https://taskmanager-api-uekc.onrender.com/api';
 };
 
 export const API_BASE_URL = getApiBaseUrl();

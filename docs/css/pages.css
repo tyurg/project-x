@@ -40,11 +40,6 @@
     background: #4e80c2;
 }
 
-.change-user-btn:disabled {
-    background: #aaa;
-    cursor: not-allowed;
-}
-
 .help-container {
     margin: 0 auto;
     padding: 0;

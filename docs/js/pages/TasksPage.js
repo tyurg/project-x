@@ -203,18 +203,57 @@ export class TasksPage extends BasePage {
         const noun = this.getDeclensionForms(count, 'задачу', 'задачи', 'задач');
         const message = `Вы уверены, что хотите удалить ${count} ${adjective} ${noun}?`;
         const confirmed = await ModalDialog.showConfirm(message);
-        if (confirmed) {
-            const token = UserService.getToken();
-            if (!token) return;
-            for (const task of completedTasks) {
-                await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-            }
-            this.tasks = this.tasks.filter(task => !task.completed);
-            this.applyFiltersAndSort();
+        if (!confirmed) return;
+
+        // 1. Находим DOM-элементы завершённых задач
+        const taskElements = document.querySelectorAll('.out-task');
+        const completedElements = Array.from(taskElements).filter(el => {
+            // Ищем задачу по id или по тексту заголовка – лучше по id
+            const taskId = parseInt(el.getAttribute('data-task-id'));
+            return completedTasks.some(task => task.id === taskId);
+        });
+
+        // Если по какой-то причине не нашли элементы, удаляем без анимации
+        if (completedElements.length === 0) {
+            await this._deleteCompletedTasksFromServer(completedTasks);
+            return;
         }
+
+        // 2. Добавляем анимацию
+        let animationsCompleted = 0;
+        const onAnimationEnd = () => {
+            animationsCompleted++;
+            if (animationsCompleted === completedElements.length) {
+                // 3. После анимации удаляем с сервера
+                this._deleteCompletedTasksFromServer(completedTasks);
+            }
+        };
+
+        completedElements.forEach(el => {
+            el.addEventListener('transitionend', onAnimationEnd, { once: true });
+            el.classList.add('removing');
+        });
+
+        // Fallback на случай, если transitionend не сработает (например, нет перехода)
+        setTimeout(() => {
+            if (animationsCompleted !== completedElements.length) {
+                this._deleteCompletedTasksFromServer(completedTasks);
+            }
+        }, 250);
+    }
+
+    // Выносим логику удаления в отдельный метод, чтобы не дублировать
+    async _deleteCompletedTasksFromServer(completedTasks) {
+        const token = UserService.getToken();
+        if (!token) return;
+        for (const task of completedTasks) {
+            await fetch(`${API_BASE_URL}/tasks/${task.id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+        }
+        this.tasks = this.tasks.filter(task => !task.completed);
+        this.applyFiltersAndSort();
     }
 
     getDeclensionForms(number, oneForm, twoForm, fiveForm) {

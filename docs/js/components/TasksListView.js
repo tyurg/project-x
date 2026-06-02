@@ -34,6 +34,7 @@ export class TasksListView {
     createTaskElement(task, displayIndex) {
         const taskDiv = document.createElement('div');
         taskDiv.className = 'out-task';
+        taskDiv.setAttribute('data-task-id', task.id);
         if (task.completed) taskDiv.classList.add('completed');
 
         const header = document.createElement('div');

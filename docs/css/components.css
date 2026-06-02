@@ -109,25 +109,6 @@
     transform: scale(1.05);
 }
 
-.task-description {
-    width: 100%;
-    background-color: #f0f8ff;
-    border-radius: 0.5rem;
-    color: #273c46;
-    border: 0.0625rem solid #72808b;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.95rem;
-    font-family: inherit;
-    resize: vertical;
-    box-sizing: border-box;
-}
-
-.task-description:focus {
-    outline: none;
-    border-color: #6294d6;
-    box-shadow: 0 0 0.3125rem rgba(98, 148, 214, 0.3);
-}
-
 .task-details {
     display: flex;
     flex-wrap: wrap;
@@ -493,8 +474,7 @@
     margin-top: 1rem;
 }
 
-.loading-header {
-    background: #f0f8ff;
-    padding: 1rem;
-    text-align: center;
+.out-task.removing {
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }

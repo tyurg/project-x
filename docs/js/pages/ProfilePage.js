@@ -38,22 +38,15 @@ export class ProfilePage extends BasePage {
                     <p><strong>Местоположение:</strong> ${this.userData.location || 'Не указано'}</p>
                     <div class="profile-button-group">
                         <button id="edit-profile-btn" class="change-user-btn">Редактировать профиль</button>
-                        <button id="change-user-btn" class="change-user-btn">Сменить пользователя (выход)</button>
                     </div>
                 </div>
             </div>
         `;
 
         const editBtn = document.getElementById('edit-profile-btn');
-        const changeBtn = document.getElementById('change-user-btn');
 
         if (editBtn) {
             editBtn.addEventListener('click', () => this.openEditModal());
-        }
-        if (changeBtn) {
-            changeBtn.addEventListener('click', () => {
-                UserService.logout();
-            });
         }
     }
 
